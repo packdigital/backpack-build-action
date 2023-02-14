@@ -86,7 +86,7 @@ function run() {
             core.exportVariable('CMS_MANAGEMENT_TOKEN', core.getInput('cms_management_token'));
             core.exportVariable('SHOPIFY_ADMIN_API_TOKEN', core.getInput('shopify_admin_api_token'));
             core.exportVariable('SHOPIFY_STOREFRONT_API_TOKEN', core.getInput('shopify_storefront_api_token'));
-            yield exec.exec(`sudo /usr/bin/netlify`, [
+            yield exec.exec(`/usr/bin/netlify`, [
                 'deploy',
                 '--build',
                 getDeployCommand(),
