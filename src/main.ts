@@ -58,15 +58,8 @@ async function run(): Promise<void> {
     }
 
     exec.exec(
-      `sudo`,
-      [
-        'netlify',
-        'deploy',
-        `--build`,
-        getDeployCommand(),
-        `--message`,
-        getMessage()
-      ],
+      `sudo netlify deploy`,
+      [`--build`, getDeployCommand(), `--message`, getMessage()],
       {
         env: {
           NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
