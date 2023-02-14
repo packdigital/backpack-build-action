@@ -58,7 +58,7 @@ async function run(): Promise<void> {
     }
 
     const resp = await exec.exec(
-      `sudo node_modules/.bin/netlify`,
+      `sudo /usr/bin/netlify`,
       ['deploy', '--build', getDeployCommand(), '--message'],
       {
         env: {
