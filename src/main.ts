@@ -57,9 +57,9 @@ async function run(): Promise<void> {
       core.exportVariable('PACK_API_URL', packApiUrl)
     }
 
-    exec.exec(
-      `sudo netlify deploy`,
-      [`--build`, getDeployCommand(), `--message`, getMessage()],
+    const resp = await exec.exec(
+      `sudo netlify deploy --build ${getDeployCommand()} --message`,
+      [],
       {
         env: {
           NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
@@ -77,6 +77,8 @@ async function run(): Promise<void> {
         }
       }
     )
+
+    console.log('resp', resp)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

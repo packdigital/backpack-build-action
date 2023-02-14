@@ -76,7 +76,7 @@ function run() {
             if (packApiUrl) {
                 core.exportVariable('PACK_API_URL', packApiUrl);
             }
-            exec.exec(`sudo netlify deploy`, [`--build`, getDeployCommand(), `--message`, getMessage()], {
+            const resp = yield exec.exec(`sudo netlify deploy --build ${getDeployCommand()} --message`, [], {
                 env: {
                     NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
                     BACKPACK_SITE_ID: core.getInput('backpack_site_id'),
@@ -90,6 +90,7 @@ function run() {
                     SHOPIFY_STOREFRONT_API_TOKEN: core.getInput('shopify_storefront_api_token')
                 }
             });
+            console.log('resp', resp);
         }
         catch (error) {
             if (error instanceof Error)
