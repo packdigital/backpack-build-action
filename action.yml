@@ -1,9 +1,11 @@
 name: 'BackpackJS Build Github Action'
 description: 'Build your backpackjs storefront into a deployable application'
 author: 'Pack Digital'
+
 branding:
   icon: 'package'
   color: 'green'
+
 inputs:
   branch:
     description: 'Branch name'

@@ -32,11 +32,11 @@ const getDeployCommand = (): string => {
     return `--alias ${branch}`
   }
 
-  const autoDeployNetlifyDisabled: string = core.getInput(
+  const autoDeployDisabled: string = core.getInput(
     'auto_deploy_netlify_disabled'
   )
 
-  if (autoDeployNetlifyDisabled) {
+  if (autoDeployDisabled) {
     return '--prod-if-unlocked'
   }
 
@@ -57,25 +57,25 @@ async function run(): Promise<void> {
       core.exportVariable('PACK_API_URL', packApiUrl)
     }
 
-    const env = {
-      NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
-      BACKPACK_SITE_ID: core.getInput('backpack_site_id'),
-      CMS_CONTENT_TOKEN: core.getInput('cms_content_token'),
-      SHOPIFY_DOMAIN: core.getInput('shopify_domain'),
-      SITE_URL: core.getInput('site_url'),
-      NETLIFY_AUTH_TOKEN: core.getInput('netlify_auth_token'),
-      BACKPACK_API_SECRET_TOKEN: core.getInput('backpack_api_secret_token'),
-      CMS_MANAGEMENT_TOKEN: core.getInput('cms_management_token'),
-      SHOPIFY_ADMIN_API_TOKEN: core.getInput('shopify_admin_api_token'),
-      SHOPIFY_STOREFRONT_API_TOKEN: core.getInput(
-        'shopify_storefront_api_token'
-      )
-    }
-
     exec.exec(
       `netlify`,
-      ['deploy', `--build ${getDeployCommand()}`, `--message ${getMessage()}`],
-      {env}
+      ['deploy', `--build`, getDeployCommand(), `--message`, getMessage()],
+      {
+        env: {
+          NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
+          BACKPACK_SITE_ID: core.getInput('backpack_site_id'),
+          CMS_CONTENT_TOKEN: core.getInput('cms_content_token'),
+          SHOPIFY_DOMAIN: core.getInput('shopify_domain'),
+          SITE_URL: core.getInput('site_url'),
+          NETLIFY_AUTH_TOKEN: core.getInput('netlify_auth_token'),
+          BACKPACK_API_SECRET_TOKEN: core.getInput('backpack_api_secret_token'),
+          CMS_MANAGEMENT_TOKEN: core.getInput('cms_management_token'),
+          SHOPIFY_ADMIN_API_TOKEN: core.getInput('shopify_admin_api_token'),
+          SHOPIFY_STOREFRONT_API_TOKEN: core.getInput(
+            'shopify_storefront_api_token'
+          )
+        }
+      }
     )
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
