@@ -76,7 +76,14 @@ function run() {
             if (packApiUrl) {
                 core.exportVariable('PACK_API_URL', packApiUrl);
             }
-            exec.exec(`netlify`, ['deploy', `--build`, getDeployCommand(), `--message`, getMessage()], {
+            exec.exec(`sudo`, [
+                'netlify',
+                'deploy',
+                `--build`,
+                getDeployCommand(),
+                `--message`,
+                getMessage()
+            ], {
                 env: {
                     NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
                     BACKPACK_SITE_ID: core.getInput('backpack_site_id'),
