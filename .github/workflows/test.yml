@@ -21,4 +21,17 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          milliseconds: 1000
+          branch: ${{ secrets.. }}
+          netlify_site_id: ${{ secrets.. }}
+          netlify_auth_token: ${{ secrets.. }}
+          npm_auth_token: ${{ secrets.. }}
+          backpack_api_secret_token: ${{ secrets.. }}
+          backpack_site_id: ${{ secrets.. }}
+          cms_content_token: ${{ secrets.. }}
+          cms_management_token: ${{ secrets.. }}
+          shopify_domain: ${{ secrets.. }}
+          shopify_admin_api_token: ${{ secrets.. }}
+          shopify_storefront_api_token: ${{ secrets.. }}
+          site_url: ${{ secrets.. }}
+          pack_api_url: ${{ secrets.. }}
+          auto_deploy_netlify_disabled: ${{ secrets.. }}

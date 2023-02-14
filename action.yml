@@ -1,11 +1,53 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'BackpackJS Build Github Action'
+description: 'Build your backpackjs storefront into a deployable application'
+author: 'Pack Digital'
+branding:
+  icon: 'package'
+  color: 'green'
 inputs:
-  milliseconds: # change this
+  branch:
+    description: 'Branch name'
+    required: false
+  netlify_site_id:
+    description: "NETLIFY_SITE_ID"
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  netlify_auth_token:
+    description: "NETLIFY_AUTH_TOKEN"
+    required: true
+  npm_auth_token:
+    description: "NPM_AUTH_TOKEN"
+    required: true
+  backpack_api_secret_token:
+    description: "BACKPACK_API_SECRET_TOKEN"
+    required: true
+  backpack_site_id:
+    description: "BACKPACK_SITE_ID"
+    required: true
+  cms_content_token:
+    description: "CMS_CONTENT_TOKEN"
+    required: true
+  cms_management_token:
+    description: "CMS_MANAGEMENT_TOKEN"
+    required: true
+  shopify_domain:
+    description: "SHOPIFY_DOMAIN"
+    required: true
+  shopify_admin_api_token:
+    description: "SHOPIFY_ADMIN_API_TOKEN"
+    required: true
+  shopify_storefront_api_token:
+    description: "SHOPIFY_STOREFRONT_API_TOKEN"
+    required: true
+  site_url:
+    description: "SITE_URL"
+    required: true
+  pack_api_url:
+    description: "Direct staging deploys to call staging"
+    required: false
+  auto_deploy_netlify_disabled:
+    description: "Deploy production locked"
+    required: false
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
