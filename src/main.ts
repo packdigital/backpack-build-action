@@ -59,7 +59,7 @@ async function run(): Promise<void> {
 
     const resp = await exec.exec(
       `sudo /usr/bin/netlify`,
-      ['deploy', '--build', getDeployCommand(), '--message'],
+      ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
       {
         env: {
           NETLIFY_SITE_ID: core.getInput('netlify_site_id'),

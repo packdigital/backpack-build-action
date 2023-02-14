@@ -76,7 +76,7 @@ function run() {
             if (packApiUrl) {
                 core.exportVariable('PACK_API_URL', packApiUrl);
             }
-            const resp = yield exec.exec(`sudo /usr/bin/netlify`, ['deploy', '--build', getDeployCommand(), '--message'], {
+            const resp = yield exec.exec(`sudo /usr/bin/netlify`, ['deploy', '--build', getDeployCommand(), '--message', getMessage()], {
                 env: {
                     NETLIFY_SITE_ID: core.getInput('netlify_site_id'),
                     BACKPACK_SITE_ID: core.getInput('backpack_site_id'),
