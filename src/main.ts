@@ -22,7 +22,7 @@ const getMessage = (): string => {
     messageParts.push('Deploy to production')
   }
 
-  return `"${JSON.stringify(messageParts.join(' | '))}"`
+  return `${JSON.stringify(messageParts.join(' | '))}`
 }
 
 const getDeployCommand = (): string => {
