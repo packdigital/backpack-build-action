@@ -22,7 +22,7 @@ const getMessage = (): string => {
     messageParts.push('Deploy to production')
   }
 
-  return `--message=${JSON.stringify(messageParts.join(' | '))}`
+  return messageParts.join(' | ')
 }
 
 const getDeployCommand = (): string => {
@@ -92,6 +92,7 @@ async function run(): Promise<void> {
       '--debug',
       '--build',
       getDeployCommand(),
+      '--message',
       getMessage()
     ])
   } catch (error) {

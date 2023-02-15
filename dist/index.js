@@ -52,7 +52,7 @@ const getMessage = () => {
     if (!branch && !commitMessage) {
         messageParts.push('Deploy to production');
     }
-    return `--message=${JSON.stringify(messageParts.join(' | '))}`;
+    return messageParts.join(' | ');
 };
 const getDeployCommand = () => {
     const branch = core.getInput('branch');
@@ -94,6 +94,7 @@ function run() {
                 '--debug',
                 '--build',
                 getDeployCommand(),
+                '--message',
                 getMessage()
             ]);
         }
