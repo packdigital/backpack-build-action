@@ -57,11 +57,11 @@ const getMessage = () => {
 const getDeployCommand = () => {
     const branch = core.getInput('branch');
     if (branch) {
-        return `--alias ${branch}`;
+        return `--alias="${branch}"`;
     }
     const autoDeployDisabled = core.getInput('auto_deploy_netlify_disabled');
     if (autoDeployDisabled) {
-        return '--prod-if-unlocked';
+        return '--prodIfUnlocked';
     }
     return '--prod';
 };
@@ -86,10 +86,12 @@ function run() {
             core.exportVariable('CMS_MANAGEMENT_TOKEN', core.getInput('cms_management_token'));
             core.exportVariable('SHOPIFY_ADMIN_API_TOKEN', core.getInput('shopify_admin_api_token'));
             core.exportVariable('SHOPIFY_STOREFRONT_API_TOKEN', core.getInput('shopify_storefront_api_token'));
+            yield exec.exec('sudo', ['-E', '/usr/bin/netlify', '--version']);
             yield exec.exec('sudo', [
                 '-E',
-                `/usr/bin/netlify`,
+                '/usr/bin/netlify',
                 'deploy',
+                '--debug',
                 '--build',
                 getDeployCommand(),
                 '--message',

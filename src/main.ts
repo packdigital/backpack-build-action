@@ -29,7 +29,7 @@ const getDeployCommand = (): string => {
   const branch: string = core.getInput('branch')
 
   if (branch) {
-    return `--alias ${branch}`
+    return `--alias="${branch}"`
   }
 
   const autoDeployDisabled: string = core.getInput(
@@ -37,7 +37,7 @@ const getDeployCommand = (): string => {
   )
 
   if (autoDeployDisabled) {
-    return '--prod-if-unlocked'
+    return '--prodIfUnlocked'
   }
 
   return '--prod'
@@ -83,10 +83,13 @@ async function run(): Promise<void> {
       core.getInput('shopify_storefront_api_token')
     )
 
+    await exec.exec('sudo', ['-E', '/usr/bin/netlify', '--version'])
+
     await exec.exec('sudo', [
       '-E',
-      `/usr/bin/netlify`,
+      '/usr/bin/netlify',
       'deploy',
+      '--debug',
       '--build',
       getDeployCommand(),
       '--message',
