@@ -57,7 +57,6 @@ async function run(): Promise<void> {
       core.exportVariable('PACK_API_URL', packApiUrl)
     }
 
-    core.exportVariable('RUNNER_ALLOW_RUNASROOT', '1')
     core.exportVariable('NETLIFY_SITE_ID', core.getInput('netlify_site_id'))
     core.exportVariable('BACKPACK_SITE_ID', core.getInput('backpack_site_id'))
     core.exportVariable('CMS_CONTENT_TOKEN', core.getInput('cms_content_token'))
@@ -84,13 +83,9 @@ async function run(): Promise<void> {
       core.getInput('shopify_storefront_api_token')
     )
 
-    await exec.exec('RUNNER_ALLOW_RUNASROOT="1" sudo', [
-      '-E',
-      '/usr/bin/netlify',
-      '--version'
-    ])
+    await exec.exec('sudo', ['-E', '/usr/bin/netlify', '--version'])
 
-    await exec.exec('RUNNER_ALLOW_RUNASROOT="1" sudo', [
+    await exec.exec('sudo', [
       '-E',
       '/usr/bin/netlify',
       'deploy',

@@ -76,7 +76,6 @@ function run() {
             if (packApiUrl) {
                 core.exportVariable('PACK_API_URL', packApiUrl);
             }
-            core.exportVariable('RUNNER_ALLOW_RUNASROOT', '1');
             core.exportVariable('NETLIFY_SITE_ID', core.getInput('netlify_site_id'));
             core.exportVariable('BACKPACK_SITE_ID', core.getInput('backpack_site_id'));
             core.exportVariable('CMS_CONTENT_TOKEN', core.getInput('cms_content_token'));
@@ -87,12 +86,8 @@ function run() {
             core.exportVariable('CMS_MANAGEMENT_TOKEN', core.getInput('cms_management_token'));
             core.exportVariable('SHOPIFY_ADMIN_API_TOKEN', core.getInput('shopify_admin_api_token'));
             core.exportVariable('SHOPIFY_STOREFRONT_API_TOKEN', core.getInput('shopify_storefront_api_token'));
-            yield exec.exec('RUNNER_ALLOW_RUNASROOT="1" sudo', [
-                '-E',
-                '/usr/bin/netlify',
-                '--version'
-            ]);
-            yield exec.exec('RUNNER_ALLOW_RUNASROOT="1" sudo', [
+            yield exec.exec('sudo', ['-E', '/usr/bin/netlify', '--version']);
+            yield exec.exec('sudo', [
                 '-E',
                 '/usr/bin/netlify',
                 'deploy',
