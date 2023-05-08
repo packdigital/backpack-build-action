@@ -2,6 +2,8 @@ import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 
 import {RefKey} from '../constants'
+import {readFileSync} from 'fs'
+import {createHash} from 'crypto'
 
 export function isGhes(): boolean {
   const ghUrl = new URL(
@@ -77,4 +79,11 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
     'An internal error has occurred in cache backend. Please check https://www.githubstatus.com/ for any ongoing issue in actions.'
   )
   return false
+}
+
+export function hashFile(file: string): string {
+  const fileBuffer = readFileSync(file)
+  const hashSum = createHash('sha256')
+  hashSum.update(fileBuffer)
+  return hashSum.digest('hex')
 }

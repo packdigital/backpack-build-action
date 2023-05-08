@@ -8,7 +8,7 @@ import {IStateProvider} from './state-provider'
 async function restoreImpl(
   stateProvider: IStateProvider,
   primaryKey: string,
-  cachePaths: [string, string, string]
+  cachePaths: string[]
 ): Promise<string | undefined> {
   try {
     if (!utils.isCacheFeatureAvailable()) {

@@ -2,9 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 
-import {createHash} from 'crypto'
-import {readFileSync} from 'fs'
-// eslint-disable-next-line sort-imports
+import {cachePaths, primaryKey} from './cache/constants'
 import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
 
@@ -49,18 +47,8 @@ const getDeployCommand = (): string => {
   return '--prod'
 }
 
-const hashFile = (file: string): string => {
-  const fileBuffer = readFileSync(file)
-  const hashSum = createHash('sha256')
-  hashSum.update(fileBuffer)
-  return hashSum.digest('hex')
-}
 const restoreCache = async (): Promise<void> => {
-  await restoreImpl(
-    new StateProvider(),
-    `build-backpack-${hashFile('yarn.lock')}`,
-    ['~/.npm', './node_modules', './.backpack/build/cache']
-  )
+  await restoreImpl(new StateProvider(), primaryKey, cachePaths)
 }
 
 const getInputs = (): boolean => {

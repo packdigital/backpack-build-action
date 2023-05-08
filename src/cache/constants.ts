@@ -1,7 +1,15 @@
+import {hashFile} from './utils/action-utils'
+
+export const primaryKey = `build-backpack-${hashFile('yarn.lock')}`
+
+export const cachePaths: string[] = [
+  '~/.npm',
+  './node_modules',
+  './.backpack/build/cache'
+]
+
 // eslint-disable-next-line no-shadow
 export enum Inputs {
-  Key = 'key', // Input for cache, restore, save action
-  Path = 'path', // Input for cache, restore, save action
   UploadChunkSize = 'upload-chunk-size' // Input for cache, save action
 }
 
