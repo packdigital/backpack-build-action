@@ -1,6 +1,10 @@
+import * as github from '@actions/github'
 import {hashFile} from './utils/action-utils'
 
-export const primaryKey = `build-backpack-${hashFile('yarn.lock')}`
+export const primaryKey = `backpack-${github.context.ref}-${hashFile(
+  github.context.ref,
+  'yarn.lock'
+)}`
 
 export const cachePaths: string[] = [
   '~/.npm',
