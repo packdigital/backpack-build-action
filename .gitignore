@@ -99,3 +99,5 @@ __tests__/runner/*
 lib/**/*
 # Local Netlify folder
 .netlify
+
+.idea
