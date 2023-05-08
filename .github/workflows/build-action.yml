@@ -20,6 +20,7 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: build # will run `yarn build` command
+      - name: Commit
         run: |
           git add dist/*
           git commit -m "Update GH Actions code"
