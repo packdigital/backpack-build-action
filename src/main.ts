@@ -83,6 +83,8 @@ async function run(): Promise<void> {
       core.getInput('shopify_storefront_api_token')
     )
 
+    await exec.exec('yarn')
+
     await exec.exec('netlify', ['--version'])
 
     await exec.exec('netlify', [
