@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RefKey = exports.Events = exports.State = exports.Outputs = exports.Inputs = exports.cachePaths = exports.primaryKey = void 0;
 const github = __importStar(__nccwpck_require__(5438));
 const action_utils_1 = __nccwpck_require__(6643);
-exports.primaryKey = `backpack-${github.context.ref}-${(0, action_utils_1.hashFile)(github.context.ref, 'yarn.lock')}`;
+exports.primaryKey = `build-backpack-${(0, action_utils_1.hashFile)(github.context.ref, 'yarn.lock')}`;
 exports.cachePaths = [
     '~/.npm',
     './node_modules',
