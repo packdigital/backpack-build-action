@@ -83,11 +83,9 @@ async function run(): Promise<void> {
       core.getInput('shopify_storefront_api_token')
     )
 
-    await exec.exec('sudo', ['-E', '/usr/bin/netlify', '--version'])
+    await exec.exec('netlify', ['--version'])
 
-    await exec.exec('sudo', [
-      '-E',
-      '/usr/bin/netlify',
+    await exec.exec('netlify', [
       'deploy',
       '--debug',
       '--build',
