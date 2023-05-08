@@ -417,10 +417,21 @@ const getInputs = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            core.startGroup('inputs');
+            core.info('Get Inputs');
             if (!getInputs())
                 return;
+            core.endGroup();
+            core.startGroup('cache');
+            core.info('Restore Cache');
             yield restoreCache();
+            core.endGroup();
+            core.startGroup('yarn');
+            core.info('Install Packages');
             yield exec.exec('yarn');
+            core.endGroup();
+            core.startGroup('build');
+            core.info('Build');
             yield exec.exec('netlify', ['--version']);
             yield exec.exec('netlify', [
                 'deploy',
@@ -430,6 +441,7 @@ function run() {
                 '--message',
                 getMessage()
             ]);
+            core.endGroup();
         }
         catch (error) {
             if (error instanceof Error)
