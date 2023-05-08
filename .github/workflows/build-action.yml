@@ -13,13 +13,9 @@ jobs:
         with:
           node-version: 16.x
       - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install # will run `yarn install` command
+        run: npm install
       - name: Build production bundle
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: build # will run `yarn build` command
+        run: NODE_OPTIONS=--openssl-legacy-provider npm run all
       - name: Commit
         run: |
           git add dist/*
