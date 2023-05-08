@@ -1,7 +1,7 @@
 import * as github from '@actions/github'
 import {hashFile} from './utils/action-utils'
 
-export const primaryKey = `backpack-${github.context.ref}-${hashFile(
+export const primaryKey = `build-backpack-${hashFile(
   github.context.ref,
   'yarn.lock'
 )}`
