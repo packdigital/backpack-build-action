@@ -2,17 +2,22 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 3200:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RefKey = exports.Events = exports.State = exports.Outputs = exports.Inputs = void 0;
+exports.RefKey = exports.Events = exports.State = exports.Outputs = exports.Inputs = exports.cachePaths = exports.primaryKey = void 0;
+const action_utils_1 = __nccwpck_require__(6643);
+exports.primaryKey = `build-backpack-${(0, action_utils_1.hashFile)('yarn.lock')}`;
+exports.cachePaths = [
+    '~/.npm',
+    './node_modules',
+    './.backpack/build/cache'
+];
 // eslint-disable-next-line no-shadow
 var Inputs;
 (function (Inputs) {
-    Inputs["Key"] = "key";
-    Inputs["Path"] = "path";
     Inputs["UploadChunkSize"] = "upload-chunk-size"; // Input for cache, save action
 })(Inputs = exports.Inputs || (exports.Inputs = {}));
 // eslint-disable-next-line no-shadow
@@ -220,10 +225,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isCacheFeatureAvailable = exports.getInputAsBool = exports.getInputAsInt = exports.getInputAsArray = exports.isValidEvent = exports.logWarning = exports.isExactKeyMatch = exports.isGhes = void 0;
+exports.hashFile = exports.isCacheFeatureAvailable = exports.getInputAsBool = exports.getInputAsInt = exports.getInputAsArray = exports.isValidEvent = exports.logWarning = exports.isExactKeyMatch = exports.isGhes = void 0;
 const cache = __importStar(__nccwpck_require__(7799));
 const core = __importStar(__nccwpck_require__(2186));
 const constants_1 = __nccwpck_require__(3200);
+const fs_1 = __nccwpck_require__(5747);
+const crypto_1 = __nccwpck_require__(6417);
 function isGhes() {
     const ghUrl = new URL(process.env['GITHUB_SERVER_URL'] || 'https://github.com');
     return ghUrl.hostname.toUpperCase() !== 'GITHUB.COM';
@@ -281,6 +288,13 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
     return false;
 }
 exports.isCacheFeatureAvailable = isCacheFeatureAvailable;
+function hashFile(file) {
+    const fileBuffer = (0, fs_1.readFileSync)(file);
+    const hashSum = (0, crypto_1.createHash)('sha256');
+    hashSum.update(fileBuffer);
+    return hashSum.digest('hex');
+}
+exports.hashFile = hashFile;
 
 
 /***/ }),
@@ -325,9 +339,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const github = __importStar(__nccwpck_require__(5438));
-const crypto_1 = __nccwpck_require__(6417);
-const fs_1 = __nccwpck_require__(5747);
-// eslint-disable-next-line sort-imports
+const constants_1 = __nccwpck_require__(3200);
 const state_provider_1 = __nccwpck_require__(1163);
 const restore_impl_1 = __importDefault(__nccwpck_require__(6592));
 const getMessage = () => {
@@ -357,14 +369,8 @@ const getDeployCommand = () => {
     }
     return '--prod';
 };
-const hashFile = (file) => {
-    const fileBuffer = (0, fs_1.readFileSync)(file);
-    const hashSum = (0, crypto_1.createHash)('sha256');
-    hashSum.update(fileBuffer);
-    return hashSum.digest('hex');
-};
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), `build-backpack-${hashFile('yarn.lock')}`, ['~/.npm', './node_modules', './.backpack/build/cache']);
+    yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), constants_1.primaryKey, constants_1.cachePaths);
 });
 const getInputs = () => {
     const netlifyAuthToken = core.getInput('netlify_auth_token');
