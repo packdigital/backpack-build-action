@@ -15,7 +15,7 @@ jobs:
       - name: Run install
         run: npm install
       - name: Build production bundle
-        run: NODE_OPTIONS=--openssl-legacy-provider npm run all
+        run: npm run all
       - name: Commit
         run: |
           git add dist/*
