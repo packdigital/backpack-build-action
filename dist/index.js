@@ -2,14 +2,34 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 3200:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RefKey = exports.Events = exports.State = exports.Outputs = exports.Inputs = exports.cachePaths = exports.primaryKey = void 0;
+const github = __importStar(__nccwpck_require__(5438));
 const action_utils_1 = __nccwpck_require__(6643);
-exports.primaryKey = `build-backpack-${(0, action_utils_1.hashFile)('yarn.lock')}`;
+exports.primaryKey = `backpack-${github.context.ref}-${(0, action_utils_1.hashFile)(github.context.ref, 'yarn.lock')}`;
 exports.cachePaths = [
     '~/.npm',
     './node_modules',
@@ -229,8 +249,8 @@ exports.hashFile = exports.isCacheFeatureAvailable = exports.getInputAsBool = ex
 const cache = __importStar(__nccwpck_require__(7799));
 const core = __importStar(__nccwpck_require__(2186));
 const constants_1 = __nccwpck_require__(3200);
-const fs_1 = __nccwpck_require__(5747);
 const crypto_1 = __nccwpck_require__(6417);
+const fs_1 = __nccwpck_require__(5747);
 function isGhes() {
     const ghUrl = new URL(process.env['GITHUB_SERVER_URL'] || 'https://github.com');
     return ghUrl.hostname.toUpperCase() !== 'GITHUB.COM';
@@ -288,9 +308,10 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
     return false;
 }
 exports.isCacheFeatureAvailable = isCacheFeatureAvailable;
-function hashFile(file) {
+function hashFile(branch, file) {
     const fileBuffer = (0, fs_1.readFileSync)(file);
     const hashSum = (0, crypto_1.createHash)('sha256');
+    hashSum.update(branch);
     hashSum.update(fileBuffer);
     return hashSum.digest('hex');
 }
