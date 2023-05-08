@@ -92,25 +92,19 @@ const getInputs = (): boolean => {
 
 async function run(): Promise<void> {
   try {
-    core.startGroup('inputs')
-    core.info('Get Inputs')
+    core.startGroup('Get Inputs')
     if (!getInputs()) return
     core.endGroup()
 
-    core.startGroup('cache')
-    core.info('Restore Cache')
-
+    core.startGroup('Restore Cache')
     await restoreCache()
     core.endGroup()
 
-    core.startGroup('yarn')
-    core.info('Install Packages')
-
+    core.startGroup('Install Packages')
     await exec.exec('yarn')
     core.endGroup()
 
-    core.startGroup('build')
-    core.info('Build')
+    core.startGroup('Build StoreFront')
 
     await exec.exec('netlify', ['--version'])
 
