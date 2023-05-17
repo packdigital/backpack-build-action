@@ -121,6 +121,21 @@ async function run(): Promise<void> {
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
+
+  await core.summary
+    .addHeading('Test Results')
+    // .addCodeBlock(generateTestResults(), "js")
+    .addTable([
+      [
+        {data: 'File', header: true},
+        {data: 'Result', header: true}
+      ],
+      ['foo.js', 'Pass :white_check_mark:'],
+      ['bar.js', 'Fail :x:'],
+      ['test.js', 'Pass :white_check_mark:']
+    ])
+    .addLink('View staging deployment!', 'https://github.com')
+    .write()
 }
 
 run()
