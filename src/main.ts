@@ -93,8 +93,8 @@ const getInputs = (): boolean => {
 async function run(): Promise<void> {
   const summary = core.summary.addHeading('Deploy Results :rocket:')
 
-  let myOutput = ''
-  let myError = ''
+  let stdout = ''
+  let stderr = ''
 
   try {
     core.startGroup('Get Inputs')
@@ -116,10 +116,10 @@ async function run(): Promise<void> {
     const options = {
       listeners: {
         stdout: (data: Buffer) => {
-          myOutput += data.toString()
+          stdout += `${data.toString()}\n`
         },
         stderr: (data: Buffer) => {
-          myError += data.toString()
+          stderr += `${data.toString()}\n`
         }
       }
     }
@@ -141,13 +141,15 @@ async function run(): Promise<void> {
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
-      summary.addQuote(error.message)
+      // summary.addQuote(error.message)
+      summary.addDetails(error.message, stderr)
     }
   }
 
-  summary.addLink('View staging deployment!', 'https://github.com')
+  // summary.addLink('View staging deployment!', 'https://github.com')
   // summary.addRaw(myOutput)
-  summary.addRaw(myError)
+  summary.addDetails('stdout', stdout)
+  summary.addDetails('stderr', stderr)
 
   await summary.write()
 }
