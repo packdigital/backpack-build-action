@@ -146,7 +146,7 @@ async function run(): Promise<void> {
   }
 
   summary.addLink('View staging deployment!', 'https://github.com')
-  summary.addRaw(myOutput)
+  // summary.addRaw(myOutput)
   summary.addRaw(myError)
 
   await summary.write()
