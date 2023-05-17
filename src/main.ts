@@ -91,6 +91,8 @@ const getInputs = (): boolean => {
 }
 
 async function run(): Promise<void> {
+  const summary = core.summary.addHeading('Deploy Results :rocket:')
+
   try {
     core.startGroup('Get Inputs')
     if (!getInputs()) return
@@ -108,34 +110,46 @@ async function run(): Promise<void> {
 
     await exec.exec('netlify', ['--version'])
 
-    await exec.exec('netlify', [
-      'deploy',
-      '--debug',
-      '--build',
-      getDeployCommand(),
-      '--message',
-      getMessage()
-    ])
+    let myOutput = ''
+    let myError = ''
+
+    const options = {
+      listeners: {
+        stdout: (data: Buffer) => {
+          myOutput += data.toString()
+        },
+        stderr: (data: Buffer) => {
+          myError += data.toString()
+        }
+      }
+    }
+
+    await exec.exec(
+      'netlify',
+      [
+        'deploy',
+        '--debug',
+        '--build',
+        getDeployCommand(),
+        '--message',
+        getMessage()
+      ],
+      options
+    )
+
+    summary.addLink('View staging deployment!', 'https://github.com')
+    summary.addRaw(myOutput)
+    summary.addRaw(myError)
 
     core.endGroup()
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+      summary.addQuote(error.message)
+    }
   }
 
-  await core.summary
-    .addHeading('Test Results')
-    // .addCodeBlock(generateTestResults(), "js")
-    .addTable([
-      [
-        {data: 'File', header: true},
-        {data: 'Result', header: true}
-      ],
-      ['foo.js', 'Pass :white_check_mark:'],
-      ['bar.js', 'Fail :x:'],
-      ['test.js', 'Pass :white_check_mark:']
-    ])
-    .addLink('View staging deployment!', 'https://github.com')
-    .write()
+  await summary.write()
 }
 
 run()
