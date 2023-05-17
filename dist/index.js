@@ -455,9 +455,12 @@ function run() {
             const options = {
                 listeners: {
                     stdout: (data) => {
-                        if (data.toString().includes('✖'))
+                        const readBuffer = data.toString();
+                        if (readBuffer.includes('✖'))
                             stdout = '';
-                        stdout += `${data.toString()}\n`;
+                        if (stdout.includes('error Command failed with exit code 1'))
+                            return;
+                        stdout += `${readBuffer}\n`;
                     },
                     stderr: (data) => {
                         stderr += `${data.toString()}\n`;
@@ -484,7 +487,7 @@ function run() {
         // summary.addLink('View staging deployment!', 'https://github.com')
         // summary.addRaw(myOutput)
         summary.addSeparator();
-        summary.addDetails('stdout', stdout);
+        // summary.addDetails('stdout', stdout)
         summary.addCodeBlock(stdout);
         yield summary.write();
     });
