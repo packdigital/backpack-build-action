@@ -118,7 +118,7 @@ async function run(): Promise<void> {
         stdout: (data: Buffer) => {
           const readBuffer = data.toString()
           if (readBuffer.includes('✖')) stdout = ''
-          if (stdout.includes('error Command failed with exit code 1')) return
+          if (stdout.includes('Command failed with exit code 1')) return
           stdout += `${readBuffer}\n`
         },
         stderr: (data: Buffer) => {
