@@ -437,8 +437,8 @@ const getInputs = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const summary = core.summary.addHeading('Deploy Results :rocket:');
-        let myOutput = '';
-        let myError = '';
+        let stdout = '';
+        let stderr = '';
         try {
             core.startGroup('Get Inputs');
             if (!getInputs())
@@ -455,10 +455,10 @@ function run() {
             const options = {
                 listeners: {
                     stdout: (data) => {
-                        myOutput += data.toString();
+                        stdout += `${data.toString()}\n`;
                     },
                     stderr: (data) => {
-                        myError += data.toString();
+                        stderr += `${data.toString()}\n`;
                     }
                 }
             };
@@ -475,12 +475,14 @@ function run() {
         catch (error) {
             if (error instanceof Error) {
                 core.setFailed(error.message);
-                summary.addQuote(error.message);
+                // summary.addQuote(error.message)
+                summary.addDetails(error.message, stderr);
             }
         }
-        summary.addLink('View staging deployment!', 'https://github.com');
+        // summary.addLink('View staging deployment!', 'https://github.com')
         // summary.addRaw(myOutput)
-        summary.addRaw(myError);
+        summary.addDetails('stdout', stdout);
+        summary.addDetails('stderr', stderr);
         yield summary.write();
     });
 }
