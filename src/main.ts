@@ -116,6 +116,7 @@ async function run(): Promise<void> {
     const options = {
       listeners: {
         stdout: (data: Buffer) => {
+          if (data.toString().includes('✖')) stdout = ''
           stdout += `${data.toString()}\n`
         },
         stderr: (data: Buffer) => {
@@ -142,14 +143,15 @@ async function run(): Promise<void> {
     if (error instanceof Error) {
       core.setFailed(error.message)
       // summary.addQuote(error.message)
-      summary.addDetails(error.message, stderr)
+      summary.addDetails(error.message, stdout)
     }
   }
 
   // summary.addLink('View staging deployment!', 'https://github.com')
   // summary.addRaw(myOutput)
+  summary.addSeparator()
   summary.addDetails('stdout', stdout)
-  summary.addDetails('stderr', stderr)
+  summary.addCodeBlock(stdout)
 
   await summary.write()
 }
