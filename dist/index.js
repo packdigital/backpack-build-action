@@ -437,6 +437,8 @@ const getInputs = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const summary = core.summary.addHeading('Deploy Results :rocket:');
+        let myOutput = '';
+        let myError = '';
         try {
             core.startGroup('Get Inputs');
             if (!getInputs())
@@ -450,8 +452,6 @@ function run() {
             core.endGroup();
             core.startGroup('Build StoreFront');
             yield exec.exec('netlify', ['--version']);
-            let myOutput = '';
-            let myError = '';
             const options = {
                 listeners: {
                     stdout: (data) => {
@@ -470,9 +470,6 @@ function run() {
                 '--message',
                 getMessage()
             ], options);
-            summary.addLink('View staging deployment!', 'https://github.com');
-            summary.addRaw(myOutput);
-            summary.addRaw(myError);
             core.endGroup();
         }
         catch (error) {
@@ -481,6 +478,9 @@ function run() {
                 summary.addQuote(error.message);
             }
         }
+        summary.addLink('View staging deployment!', 'https://github.com');
+        summary.addRaw(myOutput);
+        summary.addRaw(myError);
         yield summary.write();
     });
 }
