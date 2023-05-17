@@ -93,6 +93,9 @@ const getInputs = (): boolean => {
 async function run(): Promise<void> {
   const summary = core.summary.addHeading('Deploy Results :rocket:')
 
+  let myOutput = ''
+  let myError = ''
+
   try {
     core.startGroup('Get Inputs')
     if (!getInputs()) return
@@ -109,9 +112,6 @@ async function run(): Promise<void> {
     core.startGroup('Build StoreFront')
 
     await exec.exec('netlify', ['--version'])
-
-    let myOutput = ''
-    let myError = ''
 
     const options = {
       listeners: {
@@ -137,10 +137,6 @@ async function run(): Promise<void> {
       options
     )
 
-    summary.addLink('View staging deployment!', 'https://github.com')
-    summary.addRaw(myOutput)
-    summary.addRaw(myError)
-
     core.endGroup()
   } catch (error) {
     if (error instanceof Error) {
@@ -148,6 +144,10 @@ async function run(): Promise<void> {
       summary.addQuote(error.message)
     }
   }
+
+  summary.addLink('View staging deployment!', 'https://github.com')
+  summary.addRaw(myOutput)
+  summary.addRaw(myError)
 
   await summary.write()
 }
