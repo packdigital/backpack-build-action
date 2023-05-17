@@ -455,6 +455,8 @@ function run() {
             const options = {
                 listeners: {
                     stdout: (data) => {
+                        if (data.toString().includes('✖'))
+                            stdout = '';
                         stdout += `${data.toString()}\n`;
                     },
                     stderr: (data) => {
@@ -476,13 +478,14 @@ function run() {
             if (error instanceof Error) {
                 core.setFailed(error.message);
                 // summary.addQuote(error.message)
-                summary.addDetails(error.message, stderr);
+                summary.addDetails(error.message, stdout);
             }
         }
         // summary.addLink('View staging deployment!', 'https://github.com')
         // summary.addRaw(myOutput)
+        summary.addSeparator();
         summary.addDetails('stdout', stdout);
-        summary.addDetails('stderr', stderr);
+        summary.addCodeBlock(stdout);
         yield summary.write();
     });
 }
