@@ -479,7 +479,7 @@ function run() {
             }
         }
         summary.addLink('View staging deployment!', 'https://github.com');
-        summary.addRaw(myOutput);
+        // summary.addRaw(myOutput)
         summary.addRaw(myError);
         yield summary.write();
     });
