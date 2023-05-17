@@ -116,8 +116,10 @@ async function run(): Promise<void> {
     const options = {
       listeners: {
         stdout: (data: Buffer) => {
-          if (data.toString().includes('✖')) stdout = ''
-          stdout += `${data.toString()}\n`
+          const readBuffer = data.toString()
+          if (readBuffer.includes('✖')) stdout = ''
+          if (stdout.includes('error Command failed with exit code 1')) return
+          stdout += `${readBuffer}\n`
         },
         stderr: (data: Buffer) => {
           stderr += `${data.toString()}\n`
@@ -150,7 +152,7 @@ async function run(): Promise<void> {
   // summary.addLink('View staging deployment!', 'https://github.com')
   // summary.addRaw(myOutput)
   summary.addSeparator()
-  summary.addDetails('stdout', stdout)
+  // summary.addDetails('stdout', stdout)
   summary.addCodeBlock(stdout)
 
   await summary.write()
