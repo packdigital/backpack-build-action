@@ -458,7 +458,7 @@ function run() {
                         const readBuffer = data.toString();
                         if (readBuffer.includes('✖'))
                             stdout = '';
-                        if (stdout.includes('error Command failed with exit code 1'))
+                        if (stdout.includes('Command failed with exit code 1'))
                             return;
                         stdout += `${readBuffer}\n`;
                     },
