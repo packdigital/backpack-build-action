@@ -436,6 +436,7 @@ const getInputs = () => {
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        const summary = core.summary.addHeading('Deploy Results :rocket:');
         try {
             core.startGroup('Get Inputs');
             if (!getInputs())
@@ -449,6 +450,18 @@ function run() {
             core.endGroup();
             core.startGroup('Build StoreFront');
             yield exec.exec('netlify', ['--version']);
+            let myOutput = '';
+            let myError = '';
+            const options = {
+                listeners: {
+                    stdout: (data) => {
+                        myOutput += data.toString();
+                    },
+                    stderr: (data) => {
+                        myError += data.toString();
+                    }
+                }
+            };
             yield exec.exec('netlify', [
                 'deploy',
                 '--debug',
@@ -456,27 +469,19 @@ function run() {
                 getDeployCommand(),
                 '--message',
                 getMessage()
-            ]);
+            ], options);
+            summary.addLink('View staging deployment!', 'https://github.com');
+            summary.addRaw(myOutput);
+            summary.addRaw(myError);
             core.endGroup();
         }
         catch (error) {
-            if (error instanceof Error)
+            if (error instanceof Error) {
                 core.setFailed(error.message);
+                summary.addQuote(error.message);
+            }
         }
-        yield core.summary
-            .addHeading('Test Results')
-            // .addCodeBlock(generateTestResults(), "js")
-            .addTable([
-            [
-                { data: 'File', header: true },
-                { data: 'Result', header: true }
-            ],
-            ['foo.js', 'Pass :white_check_mark:'],
-            ['bar.js', 'Fail :x:'],
-            ['test.js', 'Pass :white_check_mark:']
-        ])
-            .addLink('View staging deployment!', 'https://github.com')
-            .write();
+        yield summary.write();
     });
 }
 run();
