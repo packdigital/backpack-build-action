@@ -147,8 +147,11 @@ async function run(): Promise<void> {
       core.setFailed(error.message)
       summary.addRaw(error.message)
       summary.addSeparator()
-      core.info(JSON.stringify(stdout))
-      // summary.addCodeBlock(stdout)
+
+      const index = stdout.findIndex(s => s.includes('✖'))
+      const index2 = stdout.findIndex(s => s.includes('"build.command" failed'))
+
+      summary.addCodeBlock(stdout.slice(index, index2).join('\n'))
     }
   }
 
