@@ -436,6 +436,8 @@ const getInputs = () => {
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        const summary = core.summary;
+        const stdout = [];
         try {
             core.startGroup('Get Inputs');
             if (!getInputs())
@@ -449,6 +451,13 @@ function run() {
             core.endGroup();
             core.startGroup('Build StoreFront');
             yield exec.exec('netlify', ['--version']);
+            const options = {
+                listeners: {
+                    stdout: (data) => {
+                        stdout.push(data.toString());
+                    }
+                }
+            };
             yield exec.exec('netlify', [
                 'deploy',
                 '--debug',
@@ -456,13 +465,26 @@ function run() {
                 getDeployCommand(),
                 '--message',
                 getMessage()
-            ]);
+            ], options);
             core.endGroup();
+            summary.addHeading('Deploy Success :rocket:');
+            const success = stdout.findIndex(s => s.includes('Netlify Build Complete'));
+            if (success !== -1) {
+                const url = stdout[stdout.findIndex(s => s.includes('Unique Deploy URL'))];
+                summary.addLink('NetLify URL', url.split('\n')[1].replace('Unique Deploy URL: ', ''));
+            }
         }
         catch (error) {
-            if (error instanceof Error)
-                core.setFailed(error.message);
+            if (error instanceof Error) {
+                summary.addHeading(`The build failed! :anguished: :negative_squared_cross_mark:`, 2);
+                const index = stdout.findIndex(s => s.includes('✖'));
+                const index2 = stdout.findIndex(s => s.includes('"build.command" failed'));
+                const errorCode = stdout.slice(index, index2).join('\n');
+                summary.addCodeBlock(errorCode);
+                core.setFailed(errorCode);
+            }
         }
+        yield summary.write();
     });
 }
 run();
