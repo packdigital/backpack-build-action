@@ -144,7 +144,7 @@ async function run(): Promise<void> {
 
     summary.addHeading('Deploy Results :rocket:')
 
-    const success = stdout.findIndex(s => s.includes('Deploy is live!'))
+    const success = stdout.findIndex(s => s.includes('Netlify Build Complete'))
 
     core.info(`Success??? ${success}`)
     core.info(JSON.stringify(stdout))
@@ -152,11 +152,12 @@ async function run(): Promise<void> {
     if (success !== -1) {
       summary.addRaw(':check_mark_button: Deploy with success!')
 
-      const url = stdout[
-        stdout.findIndex(s => s.includes('Unique Deploy URL'))
-      ].replace('Unique Deploy URL: ', '')
+      const url = stdout[stdout.findIndex(s => s.includes('Unique Deploy URL'))]
 
-      summary.addLink('Unique Deploy URL', url)
+      summary.addLink(
+        'Unique Deploy URL',
+        url.split('\n')[1].replace('Unique Deploy URL: ', '')
+      )
     }
   } catch (error) {
     if (error instanceof Error) {
