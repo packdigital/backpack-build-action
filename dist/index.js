@@ -480,15 +480,16 @@ function run() {
         catch (error) {
             if (error instanceof Error) {
                 core.setFailed(error.message);
-                // summary.addQuote(error.message)
-                summary.addDetails(error.message, stdout);
+                summary.addRaw(error.message);
+                summary.addSeparator();
+                summary.addCodeBlock(stdout);
             }
         }
         // summary.addLink('View staging deployment!', 'https://github.com')
         // summary.addRaw(myOutput)
-        summary.addSeparator();
+        // summary.addSeparator()
         // summary.addDetails('stdout', stdout)
-        summary.addCodeBlock(stdout);
+        // summary.addCodeBlock(stdout)
         yield summary.write();
     });
 }
