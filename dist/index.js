@@ -437,8 +437,8 @@ const getInputs = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const summary = core.summary.addHeading('Deploy Results :rocket:');
-        let stdout = '';
-        let stderr = '';
+        const stdout = [];
+        // let stderr = ''
         try {
             core.startGroup('Get Inputs');
             if (!getInputs())
@@ -455,16 +455,15 @@ function run() {
             const options = {
                 listeners: {
                     stdout: (data) => {
-                        const readBuffer = data.toString();
-                        if (readBuffer.includes('✖'))
-                            stdout = '';
-                        if (stdout.includes('Command failed with exit code 1'))
-                            return;
-                        stdout += `${readBuffer}\n`;
-                    },
-                    stderr: (data) => {
-                        stderr += `${data.toString()}\n`;
+                        stdout.push(data.toString());
+                        // const readBuffer = data.toString()
+                        // if (readBuffer.includes('✖')) stdout = ''
+                        // if (stdout.includes('Command failed with exit code 1')) return
+                        // stdout += `${readBuffer}\n`
                     }
+                    // stderr: (data: Buffer) => {
+                    //   stderr += `${data.toString()}\n`
+                    // }
                 }
             };
             yield exec.exec('netlify', [
@@ -482,7 +481,8 @@ function run() {
                 core.setFailed(error.message);
                 summary.addRaw(error.message);
                 summary.addSeparator();
-                summary.addCodeBlock(stdout);
+                core.info(JSON.stringify(stdout));
+                // summary.addCodeBlock(stdout)
             }
         }
         // summary.addLink('View staging deployment!', 'https://github.com')
