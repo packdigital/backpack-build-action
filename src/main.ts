@@ -116,14 +116,7 @@ async function run(): Promise<void> {
       listeners: {
         stdout: (data: Buffer) => {
           stdout.push(data.toString())
-          // const readBuffer = data.toString()
-          // if (readBuffer.includes('✖')) stdout = ''
-          // if (stdout.includes('Command failed with exit code 1')) return
-          // stdout += `${readBuffer}\n`
         }
-        // stderr: (data: Buffer) => {
-        //   stderr += `${data.toString()}\n`
-        // }
       }
     }
 
@@ -142,20 +135,15 @@ async function run(): Promise<void> {
 
     core.endGroup()
 
-    summary.addHeading('Deploy Results :rocket:')
+    summary.addHeading('Deploy Success :rocket:')
 
     const success = stdout.findIndex(s => s.includes('Netlify Build Complete'))
 
-    core.info(`Success??? ${success}`)
-    core.info(JSON.stringify(stdout))
-
     if (success !== -1) {
-      summary.addRaw(':check_mark_button: Deploy with success!')
-
       const url = stdout[stdout.findIndex(s => s.includes('Unique Deploy URL'))]
 
       summary.addLink(
-        'Unique Deploy URL',
+        'NetLify URL',
         url.split('\n')[1].replace('Unique Deploy URL: ', '')
       )
     }
@@ -173,12 +161,6 @@ async function run(): Promise<void> {
       core.setFailed(errorCode)
     }
   }
-
-  // summary.addLink('View staging deployment!', 'https://github.com')
-  // summary.addRaw(myOutput)
-  // summary.addSeparator()
-  // summary.addDetails('stdout', stdout)
-  // summary.addCodeBlock(stdout)
 
   await summary.write()
 }
