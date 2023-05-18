@@ -146,8 +146,11 @@ async function run(): Promise<void> {
 
     const success = stdout.findIndex(s => s.includes('Deploy is live!'))
 
+    core.info(`Success??? ${success}`)
+    core.info(JSON.stringify(stdout))
+
     if (success !== -1) {
-      summary.addRaw(':check_mark_button: Deploy with success')
+      summary.addRaw(':check_mark_button: Deploy with success!')
 
       const url = stdout[
         stdout.findIndex(s => s.includes('Unique Deploy URL'))
@@ -157,7 +160,10 @@ async function run(): Promise<void> {
     }
   } catch (error) {
     if (error instanceof Error) {
-      summary.addHeading(`The build failed! :anguished: :cross_mark:`, 2)
+      summary.addHeading(
+        `The build failed! :anguished: :negative_squared_cross_mark:`,
+        2
+      )
 
       const index = stdout.findIndex(s => s.includes('✖'))
       const index2 = stdout.findIndex(s => s.includes('"build.command" failed'))
