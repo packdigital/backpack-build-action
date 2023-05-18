@@ -92,10 +92,8 @@ const getInputs = (): boolean => {
 
 async function run(): Promise<void> {
   const summary = core.summary
-  summary.addHeading('Deploy Results :rocket:')
 
   const stdout: string[] = []
-  // let stderr = ''
 
   try {
     core.startGroup('Get Inputs')
@@ -143,13 +141,23 @@ async function run(): Promise<void> {
     )
 
     core.endGroup()
+
+    summary.addHeading('Deploy Results :rocket:')
+
+    const success = stdout.findIndex(s => s.includes('Deploy is live!'))
+
+    if (success !== -1) {
+      summary.addRaw(':check_mark_button: Deploy with success')
+
+      const url = stdout[
+        stdout.findIndex(s => s.includes('Unique Deploy URL'))
+      ].replace('Unique Deploy URL: ', '')
+
+      summary.addLink('Unique Deploy URL', url)
+    }
   } catch (error) {
     if (error instanceof Error) {
-      summary.addHeading(
-        `:anguished: :negative_squared_cross_mark: ${error.message}`,
-        2
-      )
-      summary.addSeparator()
+      summary.addHeading(`The build failed! :anguished: :cross_mark:`, 2)
 
       const index = stdout.findIndex(s => s.includes('✖'))
       const index2 = stdout.findIndex(s => s.includes('"build.command" failed'))
