@@ -436,7 +436,8 @@ const getInputs = () => {
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const summary = core.summary.addHeading('Deploy Results :rocket:');
+        const summary = core.summary;
+        summary.addHeading('Deploy Results :rocket:');
         const stdout = [];
         // let stderr = ''
         try {
@@ -478,12 +479,13 @@ function run() {
         }
         catch (error) {
             if (error instanceof Error) {
-                core.setFailed(error.message);
-                summary.addRaw(error.message);
+                summary.addHeading(`:anguished: :negative_squared_cross_mark: ${error.message}`, 2);
                 summary.addSeparator();
                 const index = stdout.findIndex(s => s.includes('✖'));
                 const index2 = stdout.findIndex(s => s.includes('"build.command" failed'));
-                summary.addCodeBlock(stdout.slice(index, index2).join('\n'));
+                const errorCode = stdout.slice(index, index2).join('\n');
+                summary.addCodeBlock(errorCode);
+                core.setFailed(errorCode);
             }
         }
         // summary.addLink('View staging deployment!', 'https://github.com')
