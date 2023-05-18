@@ -93,8 +93,8 @@ const getInputs = (): boolean => {
 async function run(): Promise<void> {
   const summary = core.summary.addHeading('Deploy Results :rocket:')
 
-  let stdout = ''
-  let stderr = ''
+  const stdout: string[] = []
+  // let stderr = ''
 
   try {
     core.startGroup('Get Inputs')
@@ -116,14 +116,15 @@ async function run(): Promise<void> {
     const options = {
       listeners: {
         stdout: (data: Buffer) => {
-          const readBuffer = data.toString()
-          if (readBuffer.includes('✖')) stdout = ''
-          if (stdout.includes('Command failed with exit code 1')) return
-          stdout += `${readBuffer}\n`
-        },
-        stderr: (data: Buffer) => {
-          stderr += `${data.toString()}\n`
+          stdout.push(data.toString())
+          // const readBuffer = data.toString()
+          // if (readBuffer.includes('✖')) stdout = ''
+          // if (stdout.includes('Command failed with exit code 1')) return
+          // stdout += `${readBuffer}\n`
         }
+        // stderr: (data: Buffer) => {
+        //   stderr += `${data.toString()}\n`
+        // }
       }
     }
 
@@ -146,7 +147,8 @@ async function run(): Promise<void> {
       core.setFailed(error.message)
       summary.addRaw(error.message)
       summary.addSeparator()
-      summary.addCodeBlock(stdout)
+      core.info(JSON.stringify(stdout))
+      // summary.addCodeBlock(stdout)
     }
   }
 
