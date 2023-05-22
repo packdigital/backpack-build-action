@@ -143,24 +143,22 @@ async function run(): Promise<void> {
 
     summary.addHeading('Deploy Success :rocket:')
 
-    const success = stdout.findIndex(s => s.includes('Netlify Build Complete'))
+    const success = stdout.findIndex(s => s.includes('Netlify Build completed'))
 
     if (success !== -1) {
-      const url = stdout[stdout.findIndex(s => s.includes('Unique Deploy URL'))]
+      const mainUrl = stdout.findIndex(s => s.includes('Unique Deploy URL'))
+      if (mainUrl !== -1) {
+        const url = stdout[mainUrl]
 
-      summary.addLink(
-        'NetLify URL',
-        url.split('\n')[1].replace('Unique Deploy URL: ', '')
-      )
-    } else {
-      const successBranch = stdout.findIndex(s =>
-        s.includes('Deploying to draft URL')
-      )
+        summary.addLink(
+          'NetLify URL',
+          url.split('\n')[1].replace('Unique Deploy URL: ', '')
+        )
+      }
 
-      if (successBranch !== -1) {
-        const url =
-          stdout[stdout.findIndex(s => s.includes('Website Draft URL'))]
-
+      const draftUrl = stdout.findIndex(s => s.includes('Website Draft URL'))
+      if (draftUrl !== -1) {
+        const url = stdout[draftUrl]
         summary.addLink(
           'NetLify URL',
           url.split('\n')[1].replace('Website Draft URL: ', '')
@@ -168,8 +166,6 @@ async function run(): Promise<void> {
       }
     }
   } catch (error) {
-    core.info(JSON.stringify(error))
-
     if (error instanceof Error) {
       summary.addHeading(
         `The build failed! :anguished: :negative_squared_cross_mark:`,
@@ -179,8 +175,12 @@ async function run(): Promise<void> {
       const index = stdout.findIndex(s => s.includes('✖'))
       const index2 = stdout.findIndex(s => s.includes('"build.command" failed'))
       const errorCode = stdout.slice(index, index2).join('\n')
-      summary.addCodeBlock(errorCode)
-      core.setFailed(errorCode)
+      if (errorCode) {
+        summary.addCodeBlock(errorCode)
+        core.setFailed(errorCode)
+      } else {
+        core.setFailed(error.message)
+      }
     }
   }
 
