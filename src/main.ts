@@ -22,7 +22,13 @@ const getMessage = (): string => {
     messageParts.push(commitMessage)
   }
 
-  if (!branch && !commitMessage) {
+  const message: string = core.getInput('message')
+
+  if (message) {
+    messageParts.push(message)
+  }
+
+  if (!branch && !commitMessage && !message) {
     messageParts.push('Deploy to production')
   }
 
