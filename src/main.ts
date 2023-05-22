@@ -5,6 +5,7 @@ import * as github from '@actions/github'
 import {cachePaths, primaryKey} from './cache/constants'
 import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
+import {failedMessage} from './slack'
 
 const getMessage = (): string => {
   const messageParts = [`Run id: ${github.context.runId}`]
@@ -178,6 +179,8 @@ async function run(): Promise<void> {
       if (errorCode) {
         summary.addCodeBlock(errorCode)
         core.setFailed(errorCode)
+
+        await failedMessage('test', 'https://google.com', errorCode)
       } else {
         core.setFailed(error.message)
       }
