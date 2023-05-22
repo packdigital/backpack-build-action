@@ -592,7 +592,7 @@ function templateFailed(repo, gitHubUrl, logs) {
 function failedMessage(repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
         const template = templateFailed(repo, gitHubUrl, logs);
-        yield axios_1.default.post('https://hooks.slack.com/services/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', template);
+        yield axios_1.default.post('https://hooks.slack.com/services/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', template);
     });
 }
 exports.failedMessage = failedMessage;
