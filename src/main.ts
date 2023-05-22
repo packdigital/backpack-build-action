@@ -175,10 +175,10 @@ async function run(): Promise<void> {
       const index = stdout.findIndex(s => s.includes('✖'))
       const index2 = stdout.findIndex(s => s.includes('"build.command" failed'))
       const errorCode = stdout.slice(index, index2).join('\n')
-      summary.addCodeBlock(errorCode)
-      core.setFailed(errorCode)
-
-      if (!errorCode) {
+      if (errorCode) {
+        summary.addCodeBlock(errorCode)
+        core.setFailed(errorCode)
+      } else {
         core.setFailed(error.message)
       }
     }
