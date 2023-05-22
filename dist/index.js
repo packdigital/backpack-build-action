@@ -394,7 +394,11 @@ const getMessage = () => {
     if (commitMessage) {
         messageParts.push(commitMessage);
     }
-    if (!branch && !commitMessage) {
+    const message = core.getInput('message');
+    if (message) {
+        messageParts.push(message);
+    }
+    if (!branch && !commitMessage && !message) {
         messageParts.push('Deploy to production');
     }
     return messageParts.join(' | ');
