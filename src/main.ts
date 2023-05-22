@@ -147,10 +147,8 @@ async function run(): Promise<void> {
     core.info(String(success))
     if (success !== -1) {
       const mainUrl = stdout.findIndex(s => s.includes('Unique Deploy URL'))
-      core.info(String(mainUrl))
       if (mainUrl !== -1) {
         const url = stdout[mainUrl]
-        core.info(url)
 
         summary.addLink(
           'NetLify URL',
@@ -159,10 +157,8 @@ async function run(): Promise<void> {
       }
 
       const draftUrl = stdout.findIndex(s => s.includes('Website Draft URL'))
-      core.info(String(draftUrl))
       if (draftUrl !== -1) {
         const url = stdout[draftUrl]
-        core.info(url)
         summary.addLink(
           'NetLify URL',
           url.split('\n')[1].replace('Website Draft URL: ', '')
@@ -170,8 +166,6 @@ async function run(): Promise<void> {
       }
     }
   } catch (error) {
-    core.info(JSON.stringify(error))
-
     if (error instanceof Error) {
       summary.addHeading(
         `The build failed! :anguished: :negative_squared_cross_mark:`,
@@ -183,6 +177,10 @@ async function run(): Promise<void> {
       const errorCode = stdout.slice(index, index2).join('\n')
       summary.addCodeBlock(errorCode)
       core.setFailed(errorCode)
+
+      if (!errorCode) {
+        core.setFailed(error.message)
+      }
     }
   }
 
