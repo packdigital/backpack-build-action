@@ -144,12 +144,13 @@ async function run(): Promise<void> {
     summary.addHeading('Deploy Success :rocket:')
 
     const success = stdout.findIndex(s => s.includes('Netlify Build completed'))
-
+    core.info(String(success))
     if (success !== -1) {
       const mainUrl = stdout.findIndex(s => s.includes('Unique Deploy URL'))
-
+      core.info(String(mainUrl))
       if (mainUrl !== -1) {
         const url = stdout[mainUrl]
+        core.info(url)
 
         summary.addLink(
           'NetLify URL',
@@ -158,10 +159,10 @@ async function run(): Promise<void> {
       }
 
       const draftUrl = stdout.findIndex(s => s.includes('Website Draft URL'))
-
+      core.info(String(draftUrl))
       if (draftUrl !== -1) {
         const url = stdout[draftUrl]
-
+        core.info(url)
         summary.addLink(
           'NetLify URL',
           url.split('\n')[1].replace('Website Draft URL: ', '')
