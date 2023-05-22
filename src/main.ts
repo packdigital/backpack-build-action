@@ -152,8 +152,24 @@ async function run(): Promise<void> {
         'NetLify URL',
         url.split('\n')[1].replace('Unique Deploy URL: ', '')
       )
+    } else {
+      const successBranch = stdout.findIndex(s =>
+        s.includes('Deploying to draft URL')
+      )
+
+      if (successBranch !== -1) {
+        const url =
+          stdout[stdout.findIndex(s => s.includes('Website Draft URL'))]
+
+        summary.addLink(
+          'NetLify URL',
+          url.split('\n')[1].replace('Website Draft URL: ', '')
+        )
+      }
     }
   } catch (error) {
+    core.info(JSON.stringify(error))
+
     if (error instanceof Error) {
       summary.addHeading(
         `The build failed! :anguished: :negative_squared_cross_mark:`,
