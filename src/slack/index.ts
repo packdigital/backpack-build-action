@@ -67,7 +67,7 @@ export async function failedMessage(
   const template = templateFailed(repo, gitHubUrl, logs)
 
   await axios.post(
-    'https://hooks.slack.com/services/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',
+    'https://hooks.slack.com/services/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',
     template
   )
 }
