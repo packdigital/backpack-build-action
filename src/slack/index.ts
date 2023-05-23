@@ -7,7 +7,7 @@ import {parseURL} from 'whatwg-url'
 
 export async function slackSend(
   webhookUrl: string,
-  payload: unknown
+  payload: unknown = null
 ): Promise<void> {
   try {
     if (webhookUrl === undefined || webhookUrl.length <= 0) {
@@ -192,10 +192,7 @@ export async function failedMessage(
   const template = templateFailed(repo, gitHubUrl, logs)
 
   try {
-    await slackSend(
-      'https://hooks.slack.com/services/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',
-      template
-    )
+    await slackSend(process.env.SLACK_WEBHOOK || '', template)
   } catch (error) {
     if (error instanceof Error || error === 'string') {
       core.error(error)
