@@ -7,7 +7,7 @@ import {parseURL} from 'whatwg-url'
 
 export async function slackSend(
   webhookUrl: string,
-  payload: any
+  payload: unknown
 ): Promise<void> {
   try {
     if (webhookUrl === undefined || webhookUrl.length <= 0) {
@@ -19,7 +19,9 @@ export async function slackSend(
     if (payload) {
       try {
         // confirm it is valid json
-        payload = JSON.parse(payload)
+        if (typeof payload === 'string') {
+          payload = JSON.parse(payload)
+        }
       } catch (e) {
         // passed in payload wasn't valid json
         throw new Error('Need to provide valid JSON payload')
@@ -74,7 +76,9 @@ export async function slackSend(
           core.info(
             'axios post failed, double check the payload being sent includes the keys Slack expects'
           )
-          core.debug(payload)
+          if (typeof payload === 'string') {
+            core.debug(payload)
+          }
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           if (err.response) {
