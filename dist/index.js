@@ -560,7 +560,7 @@ const axios_1 = __importDefault(__nccwpck_require__(8757));
 const flat_1 = __nccwpck_require__(9681);
 const github_1 = __importDefault(__nccwpck_require__(5438));
 const whatwg_url_1 = __nccwpck_require__(6365);
-function slackSend(webhookUrl, payload) {
+function slackSend(webhookUrl, payload = null) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (webhookUrl === undefined || webhookUrl.length <= 0) {
@@ -728,7 +728,7 @@ function failedMessage(repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
         const template = templateFailed(repo, gitHubUrl, logs);
         try {
-            yield slackSend('https://hooks.slack.com/services/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', template);
+            yield slackSend(process.env.SLACK_WEBHOOK || '', template);
         }
         catch (error) {
             if (error instanceof Error || error === 'string') {
