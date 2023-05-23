@@ -5,6 +5,7 @@ import * as github from '@actions/github'
 import {cachePaths, primaryKey} from './cache/constants'
 import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
+// eslint-disable-next-line sort-imports
 import {failedMessage} from './slack'
 
 const getMessage = (): string => {
