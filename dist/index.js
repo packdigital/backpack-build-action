@@ -557,18 +557,12 @@ exports.failedMessage = exports.slackSend = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const https_proxy_agent_1 = __nccwpck_require__(7219);
 const axios_1 = __importDefault(__nccwpck_require__(8757));
-const github_1 = __importDefault(__nccwpck_require__(5438));
 const whatwg_url_1 = __nccwpck_require__(6365);
-function slackSend(webhookUrl, payload = null) {
+function slackSend(webhookUrl, payload) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (webhookUrl === undefined || webhookUrl.length <= 0) {
                 throw new Error('Need to provide webhookUrl');
-            }
-            if (!payload) {
-                // No Payload was passed in
-                // Get the JSON webhook payload for the event that triggered the workflow
-                payload = github_1.default.context.payload;
             }
             const axiosOpts = {};
             try {
@@ -682,12 +676,10 @@ function templateFailed(owner, repo, gitHubUrl, logs) {
 }
 function failedMessage(owner, repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const template = templateFailed(owner, repo, gitHubUrl, logs);
         const SLACK_WEBHOOK = core.getInput('slack_webhook');
         if (SLACK_WEBHOOK) {
             try {
-                yield slackSend(SLACK_WEBHOOK, null);
+                yield slackSend(SLACK_WEBHOOK, templateFailed(owner, repo, gitHubUrl, logs));
             }
             catch (error) {
                 if (error instanceof Error || error === 'string') {
