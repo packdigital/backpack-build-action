@@ -101,7 +101,12 @@ export async function slackSend(
   }
 }
 
-function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
+function templateFailed(
+  owner: string,
+  repo: string,
+  gitHubUrl: string,
+  logs: string
+): object {
   if (logs.length > 1950) {
     logs = `${logs.slice(0, 1950)}...`
   }
@@ -122,7 +127,7 @@ function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
         type: 'section',
         text: {
           type: 'plain_text',
-          text: 'Client: ',
+          text: `Client: ${owner}`,
           emoji: true
         }
       },
@@ -167,11 +172,12 @@ function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
 }
 
 export async function failedMessage(
+  owner: string,
   repo: string,
   gitHubUrl: string,
   logs: string
 ): Promise<void> {
-  const template = templateFailed(repo, gitHubUrl, logs)
+  const template = templateFailed(owner, repo, gitHubUrl, logs)
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
 
   if (SLACK_WEBHOOK) {

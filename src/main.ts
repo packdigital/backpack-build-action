@@ -182,7 +182,8 @@ async function run(): Promise<void> {
         core.setFailed(errorCode)
 
         await failedMessage(
-          `${github?.context.repo.owner}/${github?.context.repo.repo}`,
+          github?.context.repo.owner,
+          github?.context.repo.repo,
           `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
           errorCode
         )
