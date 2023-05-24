@@ -666,14 +666,10 @@ function slackSend(webhookUrl, payload = null) {
 }
 exports.slackSend = slackSend;
 function templateFailed(repo, gitHubUrl, logs) {
-    const escapeHtml = (unsafe) => {
-        return unsafe
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    };
+    if (logs.length > 3000) {
+        logs = `${logs.slice(0, 2997)}...`;
+    }
+    logs = `\`\`\`${logs}\`\`\``;
     return {
         blocks: [
             {
@@ -725,7 +721,7 @@ function templateFailed(repo, gitHubUrl, logs) {
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `\`\`\`${escapeHtml(logs)}\`\`\``
+                    text: logs
                 }
             }
         ]
