@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import {HttpsProxyAgent} from 'https-proxy-agent'
 import axios from 'axios'
-import {flatten} from 'flat'
 import github from '@actions/github'
 import {parseURL} from 'whatwg-url'
 
@@ -21,17 +20,6 @@ export async function slackSend(
       // Get the JSON webhook payload for the event that triggered the workflow
       payload = github.context.payload
     }
-
-    const flatPayload = flatten(payload)
-
-    // workflow builder requires values to be strings
-    // iterate over every value and convert it to string
-    // eslint-disable-next-line github/array-foreach
-    Object.keys(flatPayload).forEach(key => {
-      flatPayload[key] = `${flatPayload[key]}`
-    })
-
-    payload = flatPayload
 
     const axiosOpts = {}
     try {
@@ -185,8 +173,6 @@ export async function failedMessage(
 ): Promise<void> {
   const template = templateFailed(repo, gitHubUrl, logs)
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
-
-  core.info(JSON.stringify(template))
 
   if (SLACK_WEBHOOK) {
     try {
