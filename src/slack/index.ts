@@ -147,6 +147,7 @@ export async function failedMessage(
   gitHubUrl: string,
   logs: string
 ): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const template = templateFailed(owner, repo, gitHubUrl, logs)
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
 
