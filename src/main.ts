@@ -5,6 +5,8 @@ import * as github from '@actions/github'
 import {cachePaths, primaryKey} from './cache/constants'
 import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
+// eslint-disable-next-line sort-imports
+import {failedMessage} from './slack'
 
 const getMessage = (): string => {
   const messageParts = [`Run id: ${github.context.runId}`]
@@ -178,6 +180,13 @@ async function run(): Promise<void> {
       if (errorCode) {
         summary.addCodeBlock(errorCode)
         core.setFailed(errorCode)
+
+        await failedMessage(
+          github?.context.repo.owner,
+          github?.context.repo.repo,
+          `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
+          errorCode
+        )
       } else {
         core.setFailed(error.message)
       }

@@ -32,7 +32,10 @@
     "@actions/github": "^5.1.1",
     "@octokit/webhooks": "^10.7.0",
     "@octokit/webhooks-definitions": "^3.67.3",
-    "crypto": "^1.0.1"
+    "axios": "^1.4.0",
+    "crypto": "^1.0.1",
+    "https-proxy-agent": "^6.2.0",
+    "whatwg-url": "^12.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.1.1",

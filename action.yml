@@ -52,6 +52,9 @@ inputs:
   auto_deploy_netlify_disabled:
     description: "Deploy production locked"
     required: false
+  slack_webhook:
+    description: "Slack http endpoint"
+    required: false
 
 runs:
   using: 'node16'
