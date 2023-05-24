@@ -497,7 +497,7 @@ function run() {
                 if (errorCode) {
                     summary.addCodeBlock(errorCode);
                     core.setFailed(errorCode);
-                    yield (0, slack_1.failedMessage)(`${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}`, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
+                    yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
                 }
                 else {
                     core.setFailed(error.message);
@@ -644,7 +644,7 @@ function slackSend(webhookUrl, payload = null) {
     });
 }
 exports.slackSend = slackSend;
-function templateFailed(repo, gitHubUrl, logs) {
+function templateFailed(owner, repo, gitHubUrl, logs) {
     if (logs.length > 1950) {
         logs = `${logs.slice(0, 1950)}...`;
     }
@@ -663,7 +663,7 @@ function templateFailed(repo, gitHubUrl, logs) {
                 type: 'section',
                 text: {
                     type: 'plain_text',
-                    text: 'Client: ',
+                    text: `Client: ${owner}`,
                     emoji: true
                 }
             },
@@ -706,9 +706,9 @@ function templateFailed(repo, gitHubUrl, logs) {
         ]
     };
 }
-function failedMessage(repo, gitHubUrl, logs) {
+function failedMessage(owner, repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
-        const template = templateFailed(repo, gitHubUrl, logs);
+        const template = templateFailed(owner, repo, gitHubUrl, logs);
         const SLACK_WEBHOOK = core.getInput('slack_webhook');
         if (SLACK_WEBHOOK) {
             try {
