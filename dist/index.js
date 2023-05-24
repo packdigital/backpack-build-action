@@ -565,7 +565,6 @@ function slackSend(webhookUrl, payload = null) {
             if (webhookUrl === undefined || webhookUrl.length <= 0) {
                 throw new Error('Need to provide webhookUrl');
             }
-            let webResponse;
             if (!payload) {
                 // No Payload was passed in
                 // Get the JSON webhook payload for the event that triggered the workflow
@@ -590,7 +589,6 @@ function slackSend(webhookUrl, payload = null) {
             catch (err) {
                 core.info('failed to configure https proxy agent for http proxy. Using default axios configuration');
             }
-            core.info(JSON.stringify(payload));
             try {
                 yield axios_1.default.post(webhookUrl, payload, axiosOpts);
             }
@@ -611,30 +609,6 @@ function slackSend(webhookUrl, payload = null) {
                     return;
                 }
             }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            if (webResponse && webResponse.ok) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                core.setOutput('ts', webResponse.ts);
-                // return the thread_ts if it exists, if not return the ts
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                const thread_ts = (webResponse === null || webResponse === void 0 ? void 0 : webResponse.thread_ts)
-                    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        webResponse.thread_ts
-                    : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        webResponse.ts;
-                core.setOutput('thread_ts', thread_ts);
-                // return id of the channel from the response
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                core.setOutput('channel_id', webResponse.channel);
-            }
-            const time = new Date().toTimeString();
-            core.setOutput('time', time);
         }
         catch (error) {
             if (error instanceof Error || error === 'string') {
@@ -708,11 +682,12 @@ function templateFailed(owner, repo, gitHubUrl, logs) {
 }
 function failedMessage(owner, repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const template = templateFailed(owner, repo, gitHubUrl, logs);
         const SLACK_WEBHOOK = core.getInput('slack_webhook');
         if (SLACK_WEBHOOK) {
             try {
-                yield slackSend(SLACK_WEBHOOK, template);
+                yield slackSend(SLACK_WEBHOOK, null);
             }
             catch (error) {
                 if (error instanceof Error || error === 'string') {
