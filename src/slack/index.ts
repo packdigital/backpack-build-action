@@ -28,68 +28,68 @@ export async function slackSend(
       }
     }
 
-    if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
-      if (!payload) {
-        // No Payload was passed in
-        // Get the JSON webhook payload for the event that triggered the workflow
-        payload = github.context.payload
-      }
+    if (!payload) {
+      // No Payload was passed in
+      // Get the JSON webhook payload for the event that triggered the workflow
+      payload = github.context.payload
+    }
 
-      const flatPayload = flatten(payload)
+    const flatPayload = flatten(payload)
 
-      // workflow builder requires values to be strings
-      // iterate over every value and convert it to string
-      // eslint-disable-next-line github/array-foreach
-      Object.keys(flatPayload).forEach(key => {
-        flatPayload[key] = `${flatPayload[key]}`
-      })
+    // workflow builder requires values to be strings
+    // iterate over every value and convert it to string
+    // eslint-disable-next-line github/array-foreach
+    Object.keys(flatPayload).forEach(key => {
+      flatPayload[key] = `${flatPayload[key]}`
+    })
 
-      payload = flatPayload
+    payload = flatPayload
 
-      const axiosOpts = {}
-      try {
-        if (parseURL(webhookUrl).scheme === 'https') {
-          const httpsProxy =
-            process.env.HTTPS_PROXY || process.env.https_proxy || ''
-          if (httpsProxy && parseURL(httpsProxy).scheme === 'http') {
-            const httpsProxyAgent = new HttpsProxyAgent(httpsProxy)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            axiosOpts.httpsAgent = httpsProxyAgent
-
-            // Use configured tunnel above instead of default axios proxy setup from env vars
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            axiosOpts.proxy = false
-          }
-        }
-      } catch (err) {
-        core.info(
-          'failed to configure https proxy agent for http proxy. Using default axios configuration'
-        )
-      }
-
-      try {
-        await axios.post(webhookUrl, payload, axiosOpts)
-      } catch (err) {
-        if (err instanceof Error) {
-          core.info(
-            'axios post failed, double check the payload being sent includes the keys Slack expects'
-          )
-          if (typeof payload === 'string') {
-            core.debug(payload)
-          }
+    const axiosOpts = {}
+    try {
+      if (parseURL(webhookUrl).scheme === 'https') {
+        const httpsProxy =
+          process.env.HTTPS_PROXY || process.env.https_proxy || ''
+        if (httpsProxy && parseURL(httpsProxy).scheme === 'http') {
+          const httpsProxyAgent = new HttpsProxyAgent(httpsProxy)
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          if (err.response) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            core.setFailed(err.response.data)
-          }
+          axiosOpts.httpsAgent = httpsProxyAgent
 
-          core.setFailed(err.message)
-          return
+          // Use configured tunnel above instead of default axios proxy setup from env vars
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          axiosOpts.proxy = false
         }
+      }
+    } catch (err) {
+      core.info(
+        'failed to configure https proxy agent for http proxy. Using default axios configuration'
+      )
+    }
+
+    core.info(JSON.stringify(payload))
+
+    try {
+      await axios.post(webhookUrl, payload, axiosOpts)
+    } catch (err) {
+      if (err instanceof Error) {
+        core.info(
+          'axios post failed, double check the payload being sent includes the keys Slack expects'
+        )
+        if (typeof payload === 'string') {
+          core.debug(payload)
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (err.response) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          core.setFailed(err.response.data)
+        }
+
+        core.setFailed(err.message)
+        return
       }
     }
 
@@ -191,6 +191,8 @@ export async function failedMessage(
 ): Promise<void> {
   const template = templateFailed(repo, gitHubUrl, logs)
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
+
+  core.info(JSON.stringify(template))
 
   if (SLACK_WEBHOOK) {
     try {
