@@ -102,8 +102,8 @@ export async function slackSend(
 }
 
 function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
-  if (logs.length > 2950) {
-    logs = `${logs.slice(0, 2950)}...`
+  if (logs.length > 1950) {
+    logs = `${logs.slice(0, 1950)}...`
   }
 
   logs = `\`\`\`${logs}\`\`\``

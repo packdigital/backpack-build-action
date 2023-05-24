@@ -181,7 +181,11 @@ async function run(): Promise<void> {
         summary.addCodeBlock(errorCode)
         core.setFailed(errorCode)
 
-        await failedMessage('test', 'https://google.com', errorCode)
+        await failedMessage(
+          `${github?.context.repo.owner}/${github?.context.repo.repo}`,
+          `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
+          errorCode
+        )
       } else {
         core.setFailed(error.message)
       }
