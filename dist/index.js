@@ -567,18 +567,6 @@ function slackSend(webhookUrl, payload = null) {
                 throw new Error('Need to provide webhookUrl');
             }
             let webResponse;
-            if (payload) {
-                try {
-                    // confirm it is valid json
-                    if (typeof payload === 'string') {
-                        payload = JSON.parse(payload);
-                    }
-                }
-                catch (e) {
-                    // passed in payload wasn't valid json
-                    throw new Error('Need to provide valid JSON payload');
-                }
-            }
             if (!payload) {
                 // No Payload was passed in
                 // Get the JSON webhook payload for the event that triggered the workflow
@@ -666,8 +654,8 @@ function slackSend(webhookUrl, payload = null) {
 }
 exports.slackSend = slackSend;
 function templateFailed(repo, gitHubUrl, logs) {
-    if (logs.length > 3000) {
-        logs = `${logs.slice(0, 2997)}...`;
+    if (logs.length > 2950) {
+        logs = `${logs.slice(0, 2950)}...`;
     }
     logs = `\`\`\`${logs}\`\`\``;
     return {
