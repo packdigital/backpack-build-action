@@ -564,7 +564,7 @@ function slackSend(webhookUrl, payload = null) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (webhookUrl === undefined || webhookUrl.length <= 0) {
-                throw new Error('Need to provide at least one botToken or webhookUrl');
+                throw new Error('Need to provide webhookUrl');
             }
             let webResponse;
             if (payload) {
@@ -727,12 +727,15 @@ function templateFailed(repo, gitHubUrl, logs) {
 function failedMessage(repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
         const template = templateFailed(repo, gitHubUrl, logs);
-        try {
-            yield slackSend(process.env.SLACK_WEBHOOK || '', template);
-        }
-        catch (error) {
-            if (error instanceof Error || error === 'string') {
-                core.error(error);
+        const SLACK_WEBHOOK = core.getInput('slack_webhook');
+        if (SLACK_WEBHOOK) {
+            try {
+                yield slackSend(SLACK_WEBHOOK, template);
+            }
+            catch (error) {
+                if (error instanceof Error || error === 'string') {
+                    core.error(error);
+                }
             }
         }
     });
