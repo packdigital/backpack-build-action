@@ -126,14 +126,11 @@ export async function slackSend(
 }
 
 function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
-  const escapeHtml = (unsafe: string): string => {
-    return unsafe
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;')
+  if (logs.length > 3000) {
+    logs = `${logs.slice(0, 2997)}...`
   }
+
+  logs = `\`\`\`${logs}\`\`\``
 
   return {
     blocks: [
@@ -186,7 +183,7 @@ function templateFailed(repo: string, gitHubUrl: string, logs: string): object {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `\`\`\`${escapeHtml(logs)}\`\`\``
+          text: logs
         }
       }
     ]
