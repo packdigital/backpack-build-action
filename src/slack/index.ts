@@ -11,7 +11,7 @@ export async function slackSend(
 ): Promise<void> {
   try {
     if (webhookUrl === undefined || webhookUrl.length <= 0) {
-      throw new Error('Need to provide at least one botToken or webhookUrl')
+      throw new Error('Need to provide webhookUrl')
     }
 
     let webResponse
@@ -190,12 +190,15 @@ export async function failedMessage(
   logs: string
 ): Promise<void> {
   const template = templateFailed(repo, gitHubUrl, logs)
+  const SLACK_WEBHOOK = core.getInput('slack_webhook')
 
-  try {
-    await slackSend(process.env.SLACK_WEBHOOK || '', template)
-  } catch (error) {
-    if (error instanceof Error || error === 'string') {
-      core.error(error)
+  if (SLACK_WEBHOOK) {
+    try {
+      await slackSend(SLACK_WEBHOOK, template)
+    } catch (error) {
+      if (error instanceof Error || error === 'string') {
+        core.error(error)
+      }
     }
   }
 }
