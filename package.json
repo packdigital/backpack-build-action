@@ -30,7 +30,7 @@
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
-    "@octokit/webhooks": "^10.7.0",
+    "@octokit/webhooks": "^11.0.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "axios": "^1.4.0",
     "crypto": "^1.0.1",
