@@ -1,22 +1,15 @@
 import * as core from '@actions/core'
 import {HttpsProxyAgent} from 'https-proxy-agent'
 import axios from 'axios'
-import github from '@actions/github'
 import {parseURL} from 'whatwg-url'
 
 export async function slackSend(
   webhookUrl: string,
-  payload: unknown = null
+  payload: unknown
 ): Promise<void> {
   try {
     if (webhookUrl === undefined || webhookUrl.length <= 0) {
       throw new Error('Need to provide webhookUrl')
-    }
-
-    if (!payload) {
-      // No Payload was passed in
-      // Get the JSON webhook payload for the event that triggered the workflow
-      payload = github.context.payload
     }
 
     const axiosOpts = {}
@@ -147,13 +140,14 @@ export async function failedMessage(
   gitHubUrl: string,
   logs: string
 ): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const template = templateFailed(owner, repo, gitHubUrl, logs)
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
 
   if (SLACK_WEBHOOK) {
     try {
-      await slackSend(SLACK_WEBHOOK, null)
+      await slackSend(
+        SLACK_WEBHOOK,
+        templateFailed(owner, repo, gitHubUrl, logs)
+      )
     } catch (error) {
       if (error instanceof Error || error === 'string') {
         core.error(error)
