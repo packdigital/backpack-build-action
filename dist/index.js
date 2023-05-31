@@ -497,7 +497,9 @@ function run() {
                 if (errorCode) {
                     summary.addCodeBlock(errorCode);
                     core.setFailed(errorCode);
-                    yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
+                    if ((github === null || github === void 0 ? void 0 : github.context.repo.owner) !== 'pack-digital-staging') {
+                        yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
+                    }
                 }
                 else {
                     core.setFailed(error.message);
