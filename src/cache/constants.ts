@@ -1,13 +1,20 @@
+import * as core from '@actions/core'
 import * as github from '@actions/github'
+import {createHash} from 'crypto'
 import {hashFile} from './utils/action-utils'
 
-export const primaryKey = `build-backpack-${hashFile(
-  github.context.ref,
-  'yarn.lock'
-)}`
+const md5 = (data: string): string =>
+  createHash('md5').update(data).digest('hex')
+
+const hashFiles = md5(
+  core.getInput('backpack_site_id') + hashFile(github.context.ref, 'yarn.lock')
+)
+
+export const primaryKey = `build-backpack-${hashFiles}`
 
 export const cachePaths: string[] = [
   '~/.npm',
+  './.next/cache',
   './node_modules',
   './.backpack/build/cache'
 ]

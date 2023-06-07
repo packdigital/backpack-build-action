@@ -141,16 +141,17 @@ export async function failedMessage(
   logs: string
 ): Promise<void> {
   const SLACK_WEBHOOK = core.getInput('slack_webhook')
-
-  if (SLACK_WEBHOOK) {
-    try {
-      await slackSend(
-        SLACK_WEBHOOK,
-        templateFailed(owner, repo, gitHubUrl, logs)
-      )
-    } catch (error) {
-      if (error instanceof Error || error === 'string') {
-        core.error(error)
+  if (!['douglas-pack-org', 'pack-digital-staging'].includes(owner)) {
+    if (SLACK_WEBHOOK) {
+      try {
+        await slackSend(
+          SLACK_WEBHOOK,
+          templateFailed(owner, repo, gitHubUrl, logs)
+        )
+      } catch (error) {
+        if (error instanceof Error || error === 'string') {
+          core.error(error)
+        }
       }
     }
   }
