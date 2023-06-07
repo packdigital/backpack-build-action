@@ -181,14 +181,12 @@ async function run(): Promise<void> {
         summary.addCodeBlock(errorCode)
         core.setFailed(errorCode)
 
-        if (github?.context.repo.owner !== 'pack-digital-staging') {
-          await failedMessage(
-            github?.context.repo.owner,
-            github?.context.repo.repo,
-            `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
-            errorCode
-          )
-        }
+        await failedMessage(
+          github?.context.repo.owner,
+          github?.context.repo.repo,
+          `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
+          errorCode
+        )
       } else {
         const indexBuildFailed = stdout.findIndex(s =>
           s.includes('"build.command" failed')
@@ -199,14 +197,12 @@ async function run(): Promise<void> {
           summary.addCodeBlock(errorCodeBuildFailed)
           core.setFailed(errorCodeBuildFailed)
 
-          if (github?.context.repo.owner !== 'pack-digital-staging') {
-            await failedMessage(
-              github?.context.repo.owner,
-              github?.context.repo.repo,
-              `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
-              errorCodeBuildFailed
-            )
-          }
+          await failedMessage(
+            github?.context.repo.owner,
+            github?.context.repo.repo,
+            `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
+            errorCodeBuildFailed
+          )
         } else {
           core.setFailed(error.message)
         }
