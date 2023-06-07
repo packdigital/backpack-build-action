@@ -74,17 +74,17 @@ with:
 
 Install the dependencies  
 ```bash
-$ npm install
+npm update
 ```
 
 Build the typescript and package it for distribution
 ```bash
-$ npm run build && npm run package
+npm run build && npm run package
 ```
 
 Run the tests :heavy_check_mark:  
 ```bash
-$ npm test
+npm test
 
  PASS  ./index.test.js
   ✓ throws invalid number (3ms)
