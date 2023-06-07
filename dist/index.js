@@ -387,7 +387,6 @@ const github = __importStar(__nccwpck_require__(5438));
 const constants_1 = __nccwpck_require__(3200);
 const state_provider_1 = __nccwpck_require__(1163);
 const restore_impl_1 = __importDefault(__nccwpck_require__(6592));
-// eslint-disable-next-line sort-imports
 const slack_1 = __nccwpck_require__(5403);
 const getMessage = () => {
     var _a, _b, _c;
@@ -506,7 +505,18 @@ function run() {
                     }
                 }
                 else {
-                    core.setFailed(error.message);
+                    const indexBuildFailed = stdout.findIndex(s => s.includes('"build.command" failed'));
+                    const errorCodeBuildFailed = stdout.slice(indexBuildFailed).join('\n');
+                    if (errorCodeBuildFailed) {
+                        summary.addCodeBlock(errorCodeBuildFailed);
+                        core.setFailed(errorCodeBuildFailed);
+                        if ((github === null || github === void 0 ? void 0 : github.context.repo.owner) !== 'pack-digital-staging') {
+                            yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCodeBuildFailed);
+                        }
+                    }
+                    else {
+                        core.setFailed(error.message);
+                    }
                 }
             }
         }
