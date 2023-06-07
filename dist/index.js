@@ -500,9 +500,7 @@ function run() {
                 if (errorCode) {
                     summary.addCodeBlock(errorCode);
                     core.setFailed(errorCode);
-                    if ((github === null || github === void 0 ? void 0 : github.context.repo.owner) !== 'pack-digital-staging') {
-                        yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
-                    }
+                    yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCode);
                 }
                 else {
                     const indexBuildFailed = stdout.findIndex(s => s.includes('"build.command" failed'));
@@ -510,9 +508,7 @@ function run() {
                     if (errorCodeBuildFailed) {
                         summary.addCodeBlock(errorCodeBuildFailed);
                         core.setFailed(errorCodeBuildFailed);
-                        if ((github === null || github === void 0 ? void 0 : github.context.repo.owner) !== 'pack-digital-staging') {
-                            yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCodeBuildFailed);
-                        }
+                        yield (0, slack_1.failedMessage)(github === null || github === void 0 ? void 0 : github.context.repo.owner, github === null || github === void 0 ? void 0 : github.context.repo.repo, `${github.context.serverUrl}/${github === null || github === void 0 ? void 0 : github.context.repo.owner}/${github === null || github === void 0 ? void 0 : github.context.repo.repo}/actions/runs/${github.context.runId}`, errorCodeBuildFailed);
                     }
                     else {
                         core.setFailed(error.message);
@@ -693,13 +689,15 @@ function templateFailed(owner, repo, gitHubUrl, logs) {
 function failedMessage(owner, repo, gitHubUrl, logs) {
     return __awaiter(this, void 0, void 0, function* () {
         const SLACK_WEBHOOK = core.getInput('slack_webhook');
-        if (SLACK_WEBHOOK) {
-            try {
-                yield slackSend(SLACK_WEBHOOK, templateFailed(owner, repo, gitHubUrl, logs));
-            }
-            catch (error) {
-                if (error instanceof Error || error === 'string') {
-                    core.error(error);
+        if (!['douglas-pack-org', 'pack-digital-staging'].includes(owner)) {
+            if (SLACK_WEBHOOK) {
+                try {
+                    yield slackSend(SLACK_WEBHOOK, templateFailed(owner, repo, gitHubUrl, logs));
+                }
+                catch (error) {
+                    if (error instanceof Error || error === 'string') {
+                        core.error(error);
+                    }
                 }
             }
         }
