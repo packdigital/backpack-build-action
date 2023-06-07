@@ -5,7 +5,7 @@ import * as github from '@actions/github'
 import {cachePaths, primaryKey} from './cache/constants'
 import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
-// eslint-disable-next-line sort-imports
+
 import {failedMessage} from './slack'
 
 const getMessage = (): string => {
@@ -190,7 +190,26 @@ async function run(): Promise<void> {
           )
         }
       } else {
-        core.setFailed(error.message)
+        const indexBuildFailed = stdout.findIndex(s =>
+          s.includes('"build.command" failed')
+        )
+
+        const errorCodeBuildFailed = stdout.slice(indexBuildFailed).join('\n')
+        if (errorCodeBuildFailed) {
+          summary.addCodeBlock(errorCodeBuildFailed)
+          core.setFailed(errorCodeBuildFailed)
+
+          if (github?.context.repo.owner !== 'pack-digital-staging') {
+            await failedMessage(
+              github?.context.repo.owner,
+              github?.context.repo.repo,
+              `${github.context.serverUrl}/${github?.context.repo.owner}/${github?.context.repo.repo}/actions/runs/${github.context.runId}`,
+              errorCodeBuildFailed
+            )
+          }
+        } else {
+          core.setFailed(error.message)
+        }
       }
     }
   }
