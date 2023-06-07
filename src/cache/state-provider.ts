@@ -38,7 +38,6 @@ export class NullStateProvider extends StateProviderBase {
   ])
 
   setState = (key: string, value: string): void => {
-    // eslint-disable-next-line no-invalid-this
     core.setOutput(this.stateToOutputMap.get(key) as string, value)
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
