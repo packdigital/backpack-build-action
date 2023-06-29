@@ -7,7 +7,7 @@ import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
 
 import {failedMessage} from './slack'
-import axios from 'axios/index'
+import axios from 'axios'
 
 const sendBackPackWebHook = async (status: string): Promise<void> => {
   try {
