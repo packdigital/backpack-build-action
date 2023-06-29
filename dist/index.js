@@ -388,6 +388,23 @@ const constants_1 = __nccwpck_require__(3200);
 const state_provider_1 = __nccwpck_require__(1163);
 const restore_impl_1 = __importDefault(__nccwpck_require__(6592));
 const slack_1 = __nccwpck_require__(5403);
+const axios_1 = __importDefault(__nccwpck_require__(8757));
+const sendBackPackWebHook = (status) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const packApiUrl = core.getInput('pack_api_url') || 'https://app.packdigital.com';
+        yield axios_1.default.post(`${packApiUrl}/webhooks/deploys`, {
+            id: core.getInput('deploy_id'),
+            build_id: github.context.runId,
+            site_id: core.getInput('backpack_site_id'),
+            status
+        });
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            core.info(err.message);
+        }
+    }
+});
 const getMessage = () => {
     var _a, _b, _c;
     const messageParts = [`Run id: ${github.context.runId}`];
@@ -451,6 +468,9 @@ function run() {
             core.startGroup('Get Inputs');
             if (!getInputs())
                 return;
+            core.endGroup();
+            core.startGroup('Send Deploy Webhook');
+            yield sendBackPackWebHook('building');
             core.endGroup();
             core.startGroup('Restore Cache');
             yield restoreCache();
