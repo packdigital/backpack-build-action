@@ -166,6 +166,10 @@ async function run(): Promise<void> {
 
     core.endGroup()
 
+    core.startGroup('Send Deploy Webhook')
+    await sendBackPackWebHook('ready')
+    core.endGroup()
+
     summary.addHeading('Deploy Success :rocket:')
 
     const success = stdout.findIndex(s => s.includes('Netlify Build completed'))
