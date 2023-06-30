@@ -496,6 +496,9 @@ function run() {
                 getMessage()
             ], options);
             core.endGroup();
+            core.startGroup('Send Deploy Webhook');
+            yield sendBackPackWebHook('ready');
+            core.endGroup();
             summary.addHeading('Deploy Success :rocket:');
             const success = stdout.findIndex(s => s.includes('Netlify Build completed'));
             if (success !== -1) {
