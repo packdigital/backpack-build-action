@@ -394,7 +394,7 @@ const sendBackPackWebHook = (status) => __awaiter(void 0, void 0, void 0, functi
         const packApiUrl = core.getInput('pack_api_url') || 'https://app.packdigital.com';
         yield axios_1.default.post(`${packApiUrl}/webhooks/deploys`, {
             id: core.getInput('deploy_id'),
-            build_id: github.context.runId,
+            build_id: `${github.context.runId}`,
             site_id: core.getInput('backpack_site_id'),
             status
         });
