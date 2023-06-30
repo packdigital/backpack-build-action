@@ -16,7 +16,7 @@ const sendBackPackWebHook = async (status: string): Promise<void> => {
 
     await axios.post(`${packApiUrl}/webhooks/deploys`, {
       id: core.getInput('deploy_id'),
-      build_id: github.context.runId,
+      build_id: `${github.context.runId}`,
       site_id: core.getInput('backpack_site_id'),
       status
     })
