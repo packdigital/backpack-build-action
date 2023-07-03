@@ -7,6 +7,9 @@ branding:
   color: 'green'
 
 inputs:
+  deploy_id:
+    description: 'Deploy ID'
+    required: false
   message:
     description: 'Message'
     required: false

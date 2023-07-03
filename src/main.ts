@@ -7,6 +7,25 @@ import {StateProvider} from './cache/state-provider'
 import restoreImpl from './cache/restore-impl'
 
 import {failedMessage} from './slack'
+import axios from 'axios'
+
+const sendBackPackWebHook = async (status: string): Promise<void> => {
+  try {
+    const packApiUrl: string =
+      core.getInput('pack_api_url') || 'https://app.packdigital.com'
+
+    await axios.post(`${packApiUrl}/webhooks/deploys`, {
+      id: core.getInput('deploy_id'),
+      build_id: `${github.context.runId}`,
+      site_id: core.getInput('backpack_site_id'),
+      status
+    })
+  } catch (err) {
+    if (err instanceof Error) {
+      core.info(err.message)
+    }
+  }
+}
 
 const getMessage = (): string => {
   const messageParts = [`Run id: ${github.context.runId}`]
@@ -108,6 +127,10 @@ async function run(): Promise<void> {
     if (!getInputs()) return
     core.endGroup()
 
+    core.startGroup('Send Deploy Webhook')
+    await sendBackPackWebHook('building')
+    core.endGroup()
+
     core.startGroup('Restore Cache')
     await restoreCache()
     core.endGroup()
@@ -141,6 +164,10 @@ async function run(): Promise<void> {
       options
     )
 
+    core.endGroup()
+
+    core.startGroup('Send Deploy Webhook')
+    await sendBackPackWebHook('ready')
     core.endGroup()
 
     summary.addHeading('Deploy Success :rocket:')
