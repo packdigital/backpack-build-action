@@ -515,6 +515,9 @@ function run() {
             }
         }
         catch (error) {
+            core.startGroup('Send Deploy Webhook');
+            yield sendBackPackWebHook('failed');
+            core.endGroup();
             if (error instanceof Error) {
                 summary.addHeading(`The build failed! :anguished: :negative_squared_cross_mark:`, 2);
                 const index = stdout.findIndex(s => s.includes('✖'));
