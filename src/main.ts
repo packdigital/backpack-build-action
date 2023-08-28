@@ -195,6 +195,10 @@ async function run(): Promise<void> {
       }
     }
   } catch (error) {
+    core.startGroup('Send Deploy Webhook')
+    await sendBackPackWebHook('failed')
+    core.endGroup()
+
     if (error instanceof Error) {
       summary.addHeading(
         `The build failed! :anguished: :negative_squared_cross_mark:`,
