@@ -62500,10 +62500,18 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
 }
 exports.isCacheFeatureAvailable = isCacheFeatureAvailable;
 function hashFile(branch, file) {
-    const fileBuffer = (0, fs_1.readFileSync)(file);
     const hashSum = (0, crypto_1.createHash)('sha256');
     hashSum.update(branch);
-    hashSum.update(fileBuffer);
+    try {
+        if ((0, fs_1.existsSync)(file)) {
+            const fileBuffer = (0, fs_1.readFileSync)(file);
+            hashSum.update(fileBuffer);
+            return hashSum.digest('hex');
+        }
+    }
+    catch (err) {
+        logWarning(err);
+    }
     return hashSum.digest('hex');
 }
 exports.hashFile = hashFile;
