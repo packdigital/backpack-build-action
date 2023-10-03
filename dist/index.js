@@ -329,10 +329,18 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
 }
 exports.isCacheFeatureAvailable = isCacheFeatureAvailable;
 function hashFile(branch, file) {
-    const fileBuffer = (0, fs_1.readFileSync)(file);
     const hashSum = (0, crypto_1.createHash)('sha256');
     hashSum.update(branch);
-    hashSum.update(fileBuffer);
+    try {
+        if ((0, fs_1.existsSync)(file)) {
+            const fileBuffer = (0, fs_1.readFileSync)(file);
+            hashSum.update(fileBuffer);
+            return hashSum.digest('hex');
+        }
+    }
+    catch (err) {
+        logWarning(err);
+    }
     return hashSum.digest('hex');
 }
 exports.hashFile = hashFile;
@@ -61713,6 +61721,8 @@ const urlencoded = __nccwpck_require__(1461);
 const URLSearchParams = __nccwpck_require__(9590);
 
 exports.implementation = class URLImpl {
+  // Unlike the spec, we duplicate some code between the constructor and canParse, because we want to give useful error
+  // messages in the constructor that distinguish between the different causes of failure.
   constructor(globalObject, constructorArgs) {
     const url = constructorArgs[0];
     const base = constructorArgs[1];
@@ -61738,6 +61748,23 @@ exports.implementation = class URLImpl {
     // question mark by default. Therefore the doNotStripQMark hack is used.
     this._query = URLSearchParams.createImpl(globalObject, [query], { doNotStripQMark: true });
     this._query._url = this;
+  }
+
+  static canParse(url, base) {
+    let parsedBase = null;
+    if (base !== undefined) {
+      parsedBase = usm.basicURLParse(base);
+      if (parsedBase === null) {
+        return false;
+      }
+    }
+
+    const parsedURL = usm.basicURLParse(url, { baseURL: parsedBase });
+    if (parsedURL === null) {
+      return false;
+    }
+
+    return true;
   }
 
   get href() {
@@ -62348,6 +62375,34 @@ exports.install = (globalObject, globalNames) => {
 
       esValue[implSymbol]["hash"] = V;
     }
+
+    static canParse(url) {
+      if (arguments.length < 1) {
+        throw new globalObject.TypeError(
+          `Failed to execute 'canParse' on 'URL': 1 argument required, but only ${arguments.length} present.`
+        );
+      }
+      const args = [];
+      {
+        let curArg = arguments[0];
+        curArg = conversions["USVString"](curArg, {
+          context: "Failed to execute 'canParse' on 'URL': parameter 1",
+          globals: globalObject
+        });
+        args.push(curArg);
+      }
+      {
+        let curArg = arguments[1];
+        if (curArg !== undefined) {
+          curArg = conversions["USVString"](curArg, {
+            context: "Failed to execute 'canParse' on 'URL': parameter 2",
+            globals: globalObject
+          });
+        }
+        args.push(curArg);
+      }
+      return Impl.implementation.canParse(...args);
+    }
   }
   Object.defineProperties(URL.prototype, {
     toJSON: { enumerable: true },
@@ -62366,6 +62421,7 @@ exports.install = (globalObject, globalNames) => {
     hash: { enumerable: true },
     [Symbol.toStringTag]: { value: "URL", configurable: true }
   });
+  Object.defineProperties(URL, { canParse: { enumerable: true } });
   ctorRegistry[interfaceName] = URL;
 
   Object.defineProperty(globalObject, interfaceName, {
@@ -62438,15 +62494,19 @@ exports.implementation = class URLSearchParamsImpl {
     }
   }
 
+  get size() {
+    return this._list.length;
+  }
+
   append(name, value) {
     this._list.push([name, value]);
     this._updateSteps();
   }
 
-  delete(name) {
+  delete(name, value) {
     let i = 0;
     while (i < this._list.length) {
-      if (this._list[i][0] === name) {
+      if (this._list[i][0] === name && (value === undefined || this._list[i][1] === value)) {
         this._list.splice(i, 1);
       } else {
         i++;
@@ -62474,9 +62534,9 @@ exports.implementation = class URLSearchParamsImpl {
     return output;
   }
 
-  has(name) {
+  has(name, value) {
     for (const tuple of this._list) {
-      if (tuple[0] === name) {
+      if (tuple[0] === name && (value === undefined || tuple[1] === value)) {
         return true;
       }
     }
@@ -62780,6 +62840,16 @@ exports.install = (globalObject, globalNames) => {
         });
         args.push(curArg);
       }
+      {
+        let curArg = arguments[1];
+        if (curArg !== undefined) {
+          curArg = conversions["USVString"](curArg, {
+            context: "Failed to execute 'delete' on 'URLSearchParams': parameter 2",
+            globals: globalObject
+          });
+        }
+        args.push(curArg);
+      }
       return utils.tryWrapperForImpl(esValue[implSymbol].delete(...args));
     }
 
@@ -62849,6 +62919,16 @@ exports.install = (globalObject, globalNames) => {
           context: "Failed to execute 'has' on 'URLSearchParams': parameter 1",
           globals: globalObject
         });
+        args.push(curArg);
+      }
+      {
+        let curArg = arguments[1];
+        if (curArg !== undefined) {
+          curArg = conversions["USVString"](curArg, {
+            context: "Failed to execute 'has' on 'URLSearchParams': parameter 2",
+            globals: globalObject
+          });
+        }
         args.push(curArg);
       }
       return esValue[implSymbol].has(...args);
@@ -62954,6 +63034,18 @@ exports.install = (globalObject, globalNames) => {
         i++;
       }
     }
+
+    get size() {
+      const esValue = this !== null && this !== undefined ? this : globalObject;
+
+      if (!exports.is(esValue)) {
+        throw new globalObject.TypeError(
+          "'get size' called on an object that is not a valid instance of URLSearchParams."
+        );
+      }
+
+      return esValue[implSymbol]["size"];
+    }
   }
   Object.defineProperties(URLSearchParams.prototype, {
     append: { enumerable: true },
@@ -62968,6 +63060,7 @@ exports.install = (globalObject, globalNames) => {
     values: { enumerable: true },
     entries: { enumerable: true },
     forEach: { enumerable: true },
+    size: { enumerable: true },
     [Symbol.toStringTag]: { value: "URLSearchParams", configurable: true },
     [Symbol.iterator]: { value: URLSearchParams.prototype.entries, configurable: true, writable: true }
   });
@@ -64396,13 +64489,16 @@ module.exports.serializePath = serializePath;
 module.exports.serializeURLOrigin = function (url) {
   // https://url.spec.whatwg.org/#concept-url-origin
   switch (url.scheme) {
-    case "blob":
-      try {
-        return module.exports.serializeURLOrigin(module.exports.parseURL(serializePath(url)));
-      } catch (e) {
-        // serializing an opaque origin returns "null"
+    case "blob": {
+      const pathURL = module.exports.parseURL(serializePath(url));
+      if (pathURL === null) {
         return "null";
       }
+      if (pathURL.scheme !== "http" && pathURL.scheme !== "https") {
+        return "null";
+      }
+      return module.exports.serializeURLOrigin(pathURL);
+    }
     case "ftp":
     case "http":
     case "https":

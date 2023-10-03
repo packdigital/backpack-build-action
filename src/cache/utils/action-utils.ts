@@ -3,7 +3,7 @@ import * as core from '@actions/core'
 
 import {RefKey} from '../constants'
 import {createHash} from 'crypto'
-import {readFileSync} from 'fs'
+import {readFileSync, existsSync} from 'fs'
 
 export function isGhes(): boolean {
   const ghUrl = new URL(
@@ -82,9 +82,17 @@ Otherwise please upgrade to GHES version >= 3.5 and If you are also using Github
 }
 
 export function hashFile(branch: string, file: string): string {
-  const fileBuffer = readFileSync(file)
   const hashSum = createHash('sha256')
   hashSum.update(branch)
-  hashSum.update(fileBuffer)
+  try {
+    if (existsSync(file)) {
+      const fileBuffer = readFileSync(file)
+      hashSum.update(fileBuffer)
+      return hashSum.digest('hex')
+    }
+  } catch (err) {
+    logWarning(err as string)
+  }
+
   return hashSum.digest('hex')
 }
