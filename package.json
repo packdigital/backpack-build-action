@@ -34,7 +34,7 @@
     "@octokit/webhooks-definitions": "^3.67.3",
     "axios": "^1.4.0",
     "crypto": "^1.0.1",
-    "https-proxy-agent": "^7.0.0",
+    "https-proxy-agent": "^7.0.2",
     "whatwg-url": "^13.0.0"
   },
   "devDependencies": {
