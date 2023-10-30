@@ -153,7 +153,14 @@ async function run(): Promise<void> {
 
     await exec.exec(
       'netlify',
-      ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
+      [
+        'deploy',
+        '--debug',
+        '--build',
+        getDeployCommand(),
+        '--message',
+        getMessage()
+      ],
       options
     )
 
