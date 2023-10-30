@@ -3,8 +3,10 @@ name: Build Backpack Build Action
 on:
   push:
     branches:
-      - "!main"
-      - "**"
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - '!main'   # excludes master
 
 jobs:
   build:
