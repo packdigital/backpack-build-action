@@ -71,7 +71,7 @@ const getDeployCommand = (): string => {
     return '--prodIfUnlocked'
   }
 
-  return '--prod'
+  return '--prodIfUnlocked'
 }
 
 const restoreCache = async (): Promise<void> => {
