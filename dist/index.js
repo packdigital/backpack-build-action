@@ -438,11 +438,14 @@ const getDeployCommand = () => {
     if (branch) {
         return `--alias="${branch}"`;
     }
-    const autoDeployDisabled = core.getInput('auto_deploy_netlify_disabled');
-    if (autoDeployDisabled) {
-        return '--prodIfUnlocked';
-    }
-    return '--prod';
+    // const autoDeployDisabled: string = core.getInput(
+    //   'auto_deploy_netlify_disabled'
+    // )
+    //
+    // if (autoDeployDisabled) {
+    //   return '--prodIfUnlocked'
+    // }
+    return '--prodIfUnlocked';
 };
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), constants_1.primaryKey, constants_1.cachePaths);
