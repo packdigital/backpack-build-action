@@ -2,6 +2,9 @@ name: Build Backpack Build Action
 
 on:
   push:
+    branches:
+      - "!main"
+      - "**"
 
 jobs:
   build:
