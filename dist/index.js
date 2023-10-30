@@ -495,7 +495,14 @@ function run() {
                     }
                 }
             };
-            yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
+            yield exec.exec('netlify', [
+                'deploy',
+                '--debug',
+                '--build',
+                getDeployCommand(),
+                '--message',
+                getMessage()
+            ], options);
             core.endGroup();
             core.startGroup('Send Deploy Webhook');
             yield sendBackPackWebHook('ready');
