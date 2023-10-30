@@ -63,15 +63,7 @@ const getDeployCommand = (): string => {
     return `--alias="${branch}"`
   }
 
-  const autoDeployDisabled: string = core.getInput(
-    'auto_deploy_netlify_disabled'
-  )
-
-  if (autoDeployDisabled) {
-    return '--prodIfUnlocked'
-  }
-
-  return '--prod'
+  return '--prodIfUnlocked'
 }
 
 const restoreCache = async (): Promise<void> => {
