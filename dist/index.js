@@ -495,6 +495,10 @@ function run() {
                 yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
             }
             catch (error) {
+                if (error instanceof Error) {
+                    core.error(error === null || error === void 0 ? void 0 : error.message);
+                    core.error(error === null || error === void 0 ? void 0 : error.name);
+                }
                 if (error instanceof Error &&
                     error.message.includes("Cannot read properties of null (reading 'locked')")) {
                     yield exec.exec('netlify', ['deploy', '--build', '--prod', '--message', getMessage()], options);
