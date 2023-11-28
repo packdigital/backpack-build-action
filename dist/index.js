@@ -438,7 +438,7 @@ const getDeployCommand = () => {
     if (branch) {
         return `--alias="${branch}"`;
     }
-    return '--prod';
+    return '--prodIfUnlocked';
 };
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), constants_1.primaryKey, constants_1.cachePaths);
@@ -491,7 +491,15 @@ function run() {
                     }
                 }
             };
-            yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
+            try {
+                yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
+            }
+            catch (error) {
+                if (error instanceof Error &&
+                    error.message.includes("Cannot read properties of null (reading 'locked')")) {
+                    yield exec.exec('netlify', ['deploy', '--build', '--prod', '--message', getMessage()], options);
+                }
+            }
             core.endGroup();
             core.startGroup('Send Deploy Webhook');
             yield sendBackPackWebHook('ready');
