@@ -438,13 +438,6 @@ const getDeployCommand = () => {
     if (branch) {
         return `--alias="${branch}"`;
     }
-    // const autoDeployDisabled: string = core.getInput(
-    //   'auto_deploy_netlify_disabled'
-    // )
-    //
-    // if (autoDeployDisabled) {
-    //   return '--prodIfUnlocked'
-    // }
     return '--prodIfUnlocked';
 };
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
