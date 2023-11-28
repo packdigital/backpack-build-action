@@ -63,7 +63,7 @@ const getDeployCommand = (): string => {
     return `--alias="${branch}"`
   }
 
-  return '--prod'
+  return '--prodIfUnlocked'
 }
 
 const restoreCache = async (): Promise<void> => {
@@ -143,12 +143,26 @@ async function run(): Promise<void> {
       }
     }
 
-    await exec.exec(
-      'netlify',
-      ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
-      options
-    )
-
+    try {
+      await exec.exec(
+        'netlify',
+        ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
+        options
+      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          "Cannot read properties of null (reading 'locked')"
+        )
+      ) {
+        await exec.exec(
+          'netlify',
+          ['deploy', '--build', '--prod', '--message', getMessage()],
+          options
+        )
+      }
+    }
     core.endGroup()
 
     core.startGroup('Send Deploy Webhook')
