@@ -150,6 +150,11 @@ async function run(): Promise<void> {
         options
       )
     } catch (error) {
+      if (error instanceof Error) {
+        core.error(error?.message)
+        core.error(error?.name)
+      }
+
       if (
         error instanceof Error &&
         error.message.includes(
