@@ -63,7 +63,7 @@ const getDeployCommand = (): string => {
     return `--alias="${branch}"`
   }
 
-  return '--prodIfUnlocked'
+  return '--prod'
 }
 
 const restoreCache = async (): Promise<void> => {
