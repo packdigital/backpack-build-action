@@ -56,14 +56,18 @@ const getMessage = (): string => {
   return messageParts.join(' | ')
 }
 
-const getDeployCommand = (): string => {
+const getDeployCommand = (checkLocked = true): string => {
   const branch: string = core.getInput('branch')
 
   if (branch) {
     return `--alias="${branch}"`
   }
 
-  return '--prodIfUnlocked'
+  if (checkLocked) {
+    return '--prodIfUnlocked'
+  } else {
+    return '--prod'
+  }
 }
 
 const restoreCache = async (): Promise<void> => {
@@ -143,12 +147,25 @@ async function run(): Promise<void> {
       }
     }
 
-    await exec.exec(
-      'netlify',
-      ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
-      options
-    )
-
+    try {
+      await exec.exec(
+        'netlify',
+        ['deploy', '--build', getDeployCommand(), '--message', getMessage()],
+        options
+      )
+    } catch (error) {
+      await exec.exec(
+        'netlify',
+        [
+          'deploy',
+          '--build',
+          getDeployCommand(false),
+          '--message',
+          getMessage()
+        ],
+        options
+      )
+    }
     core.endGroup()
 
     core.startGroup('Send Deploy Webhook')

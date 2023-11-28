@@ -433,12 +433,17 @@ const getMessage = () => {
     }
     return messageParts.join(' | ');
 };
-const getDeployCommand = () => {
+const getDeployCommand = (checkLocked = true) => {
     const branch = core.getInput('branch');
     if (branch) {
         return `--alias="${branch}"`;
     }
-    return '--prodIfUnlocked';
+    if (checkLocked) {
+        return '--prodIfUnlocked';
+    }
+    else {
+        return '--prod';
+    }
 };
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), constants_1.primaryKey, constants_1.cachePaths);
@@ -491,7 +496,18 @@ function run() {
                     }
                 }
             };
-            yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
+            try {
+                yield exec.exec('netlify', ['deploy', '--build', getDeployCommand(), '--message', getMessage()], options);
+            }
+            catch (error) {
+                yield exec.exec('netlify', [
+                    'deploy',
+                    '--build',
+                    getDeployCommand(false),
+                    '--message',
+                    getMessage()
+                ], options);
+            }
             core.endGroup();
             core.startGroup('Send Deploy Webhook');
             yield sendBackPackWebHook('ready');
