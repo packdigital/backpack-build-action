@@ -438,7 +438,7 @@ const getDeployCommand = () => {
     if (branch) {
         return `--alias="${branch}"`;
     }
-    return '--prodIfUnlocked';
+    return '--prod';
 };
 const restoreCache = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, restore_impl_1.default)(new state_provider_1.StateProvider(), constants_1.primaryKey, constants_1.cachePaths);
