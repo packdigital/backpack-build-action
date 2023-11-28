@@ -56,14 +56,18 @@ const getMessage = (): string => {
   return messageParts.join(' | ')
 }
 
-const getDeployCommand = (): string => {
+const getDeployCommand = (checkLocked = true): string => {
   const branch: string = core.getInput('branch')
 
   if (branch) {
     return `--alias="${branch}"`
   }
 
-  return '--prodIfUnlocked'
+  if (checkLocked) {
+    return '--prodIfUnlocked'
+  } else {
+    return '--prod'
+  }
 }
 
 const restoreCache = async (): Promise<void> => {
@@ -150,23 +154,17 @@ async function run(): Promise<void> {
         options
       )
     } catch (error) {
-      if (error instanceof Error) {
-        core.error(error?.message)
-        core.error(error?.name)
-      }
-
-      if (
-        error instanceof Error &&
-        error.message.includes(
-          "Cannot read properties of null (reading 'locked')"
-        )
-      ) {
-        await exec.exec(
-          'netlify',
-          ['deploy', '--build', '--prod', '--message', getMessage()],
-          options
-        )
-      }
+      await exec.exec(
+        'netlify',
+        [
+          'deploy',
+          '--build',
+          getDeployCommand(false),
+          '--message',
+          getMessage()
+        ],
+        options
+      )
     }
     core.endGroup()
 
